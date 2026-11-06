@@ -2,8 +2,8 @@
 /// the three ages and the three drawing styles (docs/design.md).
 library;
 
-/// The places (docs/design.md 「場景」); each has assets/scenes/<name>.json
-/// and its drawings in assets/art/<style>/<name>/.
+/// The places (docs/design.md 「場景」); each has `assets/scenes/<name>.json`
+/// and its drawings in `assets/art/<style>/<name>/`.
 enum Place {
   park('公園', 'park'),
   market('夜市', 'night market'),

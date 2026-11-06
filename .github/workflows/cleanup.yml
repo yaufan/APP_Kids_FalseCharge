@@ -1,0 +1,36 @@
+name: Clean up artifacts
+
+# By hand: Actions -> Clean up artifacts -> Run workflow. Deletes the build
+# artifacts (screenshots and test APKs) older than the days given, to make
+# room in the private repository's 500 MB. Releases and their APKs are not
+# artifacts and stay.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: Delete artifacts older than this many days (0 deletes all)
+        default: '0'
+
+permissions:
+  actions: write
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Delete artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DAYS: ${{ inputs.days }}
+        run: |
+          CUTOFF=$(date -u -d "-${DAYS:-0} days" +%Y-%m-%dT%H:%M:%SZ)
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100" \
+            --jq ".artifacts[] | select(.expired | not) | select(.created_at <= \"$CUTOFF\") | \"\(.id) \(.size_in_bytes) \(.name)\"" \
+            > artifacts.txt
+          COUNT=0; BYTES=0
+          while read -r id size name; do
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$id" < /dev/null
+            COUNT=$((COUNT + 1)); BYTES=$((BYTES + size))
+          done < artifacts.txt
+          echo "Deleted $COUNT artifacts, $((BYTES / 1000000)) MB" | tee -a "$GITHUB_STEP_SUMMARY"

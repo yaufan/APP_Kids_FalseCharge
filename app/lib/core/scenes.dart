@@ -180,7 +180,7 @@ class Lineup {
 }
 
 /// One place: its things, the extras, the hiding spots and the lineup
-/// (assets/scenes/<place>.json, written with the drawings by design/art/).
+/// (`assets/scenes/<place>.json`, written with the drawings by design/art/).
 class Scene {
   const Scene({required this.place, required this.things, required this.extras, required this.hides, required this.lineup});
 
@@ -221,5 +221,5 @@ String artPath(Style style, Place place, String art) => 'assets/art/${style.name
 
 String backgroundPath(Style style, Place place) => artPath(style, place, 'bg');
 
-/// 小變: wave, think, cheer, magic (and the hiding ones, hide_<tint>).
+/// 小變: wave, think, cheer, magic (and the hiding ones, `hide_<tint>`).
 String chameleonPath(Style style, String pose) => 'assets/art/${style.name}/chameleon_$pose.svg';
