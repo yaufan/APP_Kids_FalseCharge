@@ -241,7 +241,9 @@ void main() {
         await seconds(1.6);
       }
     }
+    caption.value = '三個都找到了（4～5 歲是五個）\n找到的地方，上下兩張都會圈起來';
     await seconds(3);
+    caption.value = '';
     await label(Strings.toHome);
     await seconds(1.2);
 
