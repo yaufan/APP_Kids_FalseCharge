@@ -36,7 +36,8 @@ class ChangeGameState extends State<ChangeGame> {
   final found = <Diff>{};
   var _peek = false;
   Diff? _hinted;
-  late final int _hintFrom = widget.hint;
+  /// The hint count when this round began (hints asked for before do not count).
+  late final int _hintFrom;
   Timer? _timer, _peekTimer;
 
   ChangeRound get _r => widget.round;
@@ -44,6 +45,7 @@ class ChangeGameState extends State<ChangeGame> {
   @override
   void initState() {
     super.initState();
+    _hintFrom = widget.hint;
     _timer = Timer(ChangeGame.lookFor(_r), _magic);
   }
 

@@ -24,7 +24,14 @@ class OddGame extends StatefulWidget {
 class _OddGameState extends State<OddGame> {
   var _found = false;
   final _wiggles = <int, int>{};
-  late final int _hintFrom = widget.hint;
+  /// The hint count when this round began (hints asked for before do not count).
+  late final int _hintFrom;
+
+  @override
+  void initState() {
+    super.initState();
+    _hintFrom = widget.hint;
+  }
 
   OddRound get _r => widget.round;
 

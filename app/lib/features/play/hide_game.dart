@@ -22,7 +22,14 @@ class HideGame extends StatefulWidget {
 
 class HideGameState extends State<HideGame> {
   var found = false;
-  late final int _hintFrom = widget.hint;
+  /// The hint count when this round began (hints asked for before do not count).
+  late final int _hintFrom;
+
+  @override
+  void initState() {
+    super.initState();
+    _hintFrom = widget.hint;
+  }
 
   HideRound get _r => widget.round;
 

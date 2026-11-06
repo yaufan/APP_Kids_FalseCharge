@@ -204,8 +204,10 @@ class Scene {
     );
   }
 
+  /// Read once per app start (sceneProvider keeps it), so the bundle's own
+  /// cache is not needed.
   static Future<Scene> load(Place place, [AssetBundle? bundle]) async {
-    final text = await (bundle ?? rootBundle).loadString('assets/scenes/${place.name}.json');
+    final text = await (bundle ?? rootBundle).loadString('assets/scenes/${place.name}.json', cache: false);
     return Scene.fromJson(place, jsonDecode(text) as Map<String, dynamic>);
   }
 }
