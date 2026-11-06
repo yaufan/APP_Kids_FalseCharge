@@ -19,7 +19,7 @@ the white towel (TINT white).
 import math
 
 import kit
-from kit import TINT, Group, Iso, Sh, crs, ellp, line, mix, oval, rrect, star_pts, tf, transform, tube
+from kit import TINT, Group, Iso, Sh, crs, ellp, line, mix, oval, rrect, star_pts, tf, transform
 
 ISO = Iso(k=1.5, ox=300, oy=186)
 TILE = 200
@@ -69,33 +69,27 @@ SHORE_YS = [i * 4 for i in range(51)]
 
 # things on the tile, in world units (for boxes: the back corner of their footprint)
 GROUND = {
-    "palm": (12, 150),
+    "palm": (10, 154),
     "surfboard": (8, 186),
-    "chair": (4, 58),           # back corner; the chair is 24 x 24
-    "umbrella": (56, 22),
-    "towel": (46, 44),          # back corner; the towel is 44 x 24
-    "ball": (86, 70),
-    "castle": (62, 132),        # back corner; the castle is 30 x 30
+    "chair": (2, 57),           # back corner; the chair is 24 x 24
+    "umbrella": (57, 21),
+    "towel": (54, 40),          # back corner; the towel is 42 x 24
+    "ball": (92, 62),
+    "castle": (70, 146),        # back corner; the castle is 30 x 30
     "bucket": (40, 172),
     "shells": (84, 192),
     "crab": (136, 184),
     "starfish": (100, 100),
-    "boat": (172, 34),
+    "boat": (174, 32),
     "swimring": (160, 130),
     "dolphin": (190, 100),
     "fish": (190, 170),
-    "ball2": (114, 70),
+    "ball2": (126, 82),
 }
 SKY_AT = {
     "sun": (522, 76),
     "seagull": (176, 82),
 }
-
-
-def S(name, z=0.0):
-    """Scene px of a thing's ground point."""
-    x, y = GROUND[name]
-    return P(x, y, z)
 
 
 def depth(name, dz=0.0):
@@ -139,7 +133,7 @@ def quad(a, c, b, k=12):
 def band(off0, off1, wav=0.0, ph=0.0):
     """The sea between shore_x + off0 and shore_x + off1 (world), clipped to the tile."""
     def edge(off):
-        return [(min(TILE, shore_x(y) + off + (wav * math.sin(y / 11 + ph) if off else 0)), y) for y in SHORE_YS]
+        return [(min(TILE, shore_x(y) + off + wav * math.sin(y / 11 + ph)), y) for y in SHORE_YS]
     inner = edge(off0)
     outer = edge(off1) if off1 is not None else [(TILE, y) for y in SHORE_YS]
     return inner + outer[::-1]
@@ -147,8 +141,7 @@ def band(off0, off1, wav=0.0, ph=0.0):
 
 def wave(x, y, L=16, amp=1.6, z=0.0):
     """A little white wave crest on the sea, running along the shore (world point)."""
-    pts = [P(x + amp * math.sin(t / L * 2 * math.pi), y + t - L / 2, z) for t in (i * L / 8 for i in range(9))]
-    return pts
+    return [P(x + amp * math.sin(t / L * 2 * math.pi), y + t - L / 2, z) for t in (i * L / 8 for i in range(9))]
 
 
 def cloud(cx, cy, s):
@@ -214,10 +207,10 @@ def background():
 CLOUDS = [((410, 48), .8), ((92, 474), .75), ((540, 484), .9), ((54, 92), .55)]
 WAVES = [(150, 8), (176, 30), (188, 6), (140, 64), (172, 66), (194, 44), (158, 104), (186, 118), (176, 150), (196, 160),
          (168, 186), (128, 40)]
-RIPPLES = [[(10, 92), (16, 102), (14, 116)], [(70, 150), (78, 160), (76, 174)], [(30, 6), (38, 14), (40, 26)],
-           [(86, 60), (90, 70), (88, 82)], [(18, 190), (26, 196)]]
-PEBBLES = [(30, 80), (54, 98), (24, 136), (88, 140), (40, 188), (70, 20), (6, 40), (84, 196), (120, 186)]
-GRASS = [(4, 30), (4, 44), (3, 96), (6, 132), (4, 186), (26, 3), (48, 4)]
+RIPPLES = [[(18, 92), (24, 102), (22, 116)], [(46, 104), (52, 114), (50, 128)], [(30, 6), (38, 14), (40, 26)],
+           [(74, 80), (80, 90), (78, 104)], [(24, 184), (30, 194)], [(110, 158), (116, 168)]]
+PEBBLES = [(30, 84), (60, 92), (24, 136), (52, 150), (40, 194), (72, 24), (6, 40), (104, 196), (96, 128)]
+GRASS = [(4, 30), (4, 44), (3, 100), (3, 122), (26, 3), (46, 4)]
 
 
 # ================================================================ things
@@ -280,17 +273,17 @@ def chair(col=ORANGE):
     x, y = GROUND["chair"]
     W = 24
     g = Group()
-    g.add(shadow(x + W / 2 + 3, y + W / 2 + 3, 20, .6), -10)
+    g.add(shadow(x + W / 2 + 2, y + W / 2 + 2, 16, .6), -10)
     for lx, ly in ((x, y), (x + W, y), (x, y + W), (x + W, y + W)):
         g.add(ISO.box(lx - 1.7, ly - 1.7, 0, 3.4, 3.4, 40, WOOD), lx + ly)
     g.add(ISO.line3([(x, y + W, 4), (x + W, y + W, 34)], WOOD, 1.8), x + y + W + .5)
     g.add(ISO.line3([(x + W, y + W, 4), (x, y + W, 34)], WOOD, 1.8), x + y + W + .6)
     # the ladder up the sea side
     for ly in (y + 6, y + W - 6):
-        g.add(ISO.line3([(x + W + 14, ly, 0), (x + W, ly, 40)], WOOD, 2.2), x + y + 2 * W + 6)
+        g.add(ISO.line3([(x + W + 11, ly, 0), (x + W, ly, 40)], WOOD, 2.2), x + y + 2 * W + 6)
     for k in range(1, 5):
         t = k / 5
-        g.add(ISO.line3([(x + W + 14 - 14 * t, y + 6, 40 * t), (x + W + 14 - 14 * t, y + W - 6, 40 * t)], WOOD, 1.8), x + y + 2 * W + 6.1)
+        g.add(ISO.line3([(x + W + 11 - 11 * t, y + 6, 40 * t), (x + W + 11 - 11 * t, y + W - 6, 40 * t)], WOOD, 1.8), x + y + 2 * W + 6.1)
     g.add(ISO.box(x - 2, y - 2, 40, W + 4, W + 4, 3, col), x + y + W + 10)
     g.add(ISO.box(x + 5, y + 4, 43, W - 9, W - 8, 4, col), x + y + W + 11)
     g.add(ISO.box(x + 2, y + 3, 43, 3, W - 6, 17, col), x + y + W + 10.5)
@@ -298,12 +291,12 @@ def chair(col=ORANGE):
         g.add(ISO.box(x + 5, ay, 47, W - 10, 2, 6, col), x + y + W + 11 + (ay - y) * .01)
     for px_, py_ in ((x - 1, y - 1), (x + W + 1, y - 1), (x - 1, y + W + 1), (x + W + 1, y + W + 1)):
         g.add(ISO.line3([(px_, py_, 43), (px_, py_, 66)], METAL, 1.6), x + y + W + 12 + (px_ + py_ - x - y) * .01)
-    g.add(ISO.box(x - 5, y - 5, 66, W + 10, W + 10, 3, col), x + y + W + 14)
+    g.add(ISO.box(x - 3, y - 3, 66, W + 6, W + 6, 3, col), x + y + W + 14)
     for k in range(3):
-        s0 = x - 5 + (W + 10) * (2 * k + 1) / 7
-        g.add(ISO.flat([(s0, y - 5), (s0 + (W + 10) / 7, y - 5), (s0 + (W + 10) / 7, y + W + 5), (s0, y + W + 5)], 69.05, WHITE),
+        s0 = x - 3 + (W + 6) * (2 * k + 1) / 7
+        g.add(ISO.flat([(s0, y - 3), (s0 + (W + 6) / 7, y - 3), (s0 + (W + 6) / 7, y + W + 3), (s0, y + W + 3)], 69.05, WHITE),
               x + y + W + 14.1)
-        g.add(ISO.face([(s0, y + W + 5, 66), (s0 + (W + 10) / 7, y + W + 5, 66), (s0 + (W + 10) / 7, y + W + 5, 69), (s0, y + W + 5, 69)],
+        g.add(ISO.face([(s0, y + W + 3, 66), (s0 + (W + 6) / 7, y + W + 3, 66), (s0 + (W + 6) / 7, y + W + 3, 69), (s0, y + W + 3, 69)],
                        "#E8ECF4"), x + y + W + 14.2)
     fx, fy = P(x + W / 2, y + W / 2, 69)
     g.add([line([(fx, fy), (fx, fy - 26)], METAL, 1.8), Sh(crs([(fx + 1, fy - 26), (fx + 17, fy - 23), (fx + 15, fy - 17), (fx + 1, fy - 16)], 4), RED)],
@@ -340,14 +333,14 @@ def umbrella(c1=RED, c2=WHITE, dots=False):
     g.add(shadow(x, y, 3.5, .9), -1)
     top = (sx + 7, sy - 88)
     g.add([line([(sx, sy), top], "#D9A56C", 3.6), line([(sx + .4, sy - 4), (sx + 1.6, sy - 18)], "#B98356", 3.6)], 0)
-    g.add(transform(canopy(c1, c2, dots), dx=top[0], dy=top[1] + 7, rot=9, s=1.15), 1)
+    g.add(transform(canopy(c1, c2, dots), dx=top[0], dy=top[1] + 7, rot=9, s=1.0), 1)
     return g.shapes()
 
 
 # ---------------------------------------------------------------- towel (white with blue stripes: 小變 hides on it)
 def towel(col=TOWEL, stripe=BLUE):
     x, y = GROUND["towel"]
-    L, D = 44, 24
+    L, D = 42, 24
     g = Group()
     g.add(ISO.box(x, y, 0, L, D, 1, col, top=col), 0)
     for s0 in (5, 9.5, L - 13.5, L - 9):
@@ -456,10 +449,10 @@ def castle(towers=3, star=False):
     g.add(ISO.box(x + 8, y + 8, 12, 14, 14, 10, CASTLE), x + y + Sz + 1)
     tower(x + 15, y + 15, 22, 14, 6, x + y + Sz + 2)
     fx, fy = P(x + 15, y + 15, 39)
-    flag = [Sh(crs([(fx + 1, fy - 24), (fx + 13, fy - 26), (fx + 24, fy - 21), (fx + 23, fy - 11), (fx + 12, fy - 15), (fx + 1, fy - 12)], 4), RED)]
+    flag = [Sh(crs([(fx + 1, fy - 21), (fx + 13, fy - 23), (fx + 24, fy - 18), (fx + 23, fy - 8), (fx + 12, fy - 12), (fx + 1, fy - 9)], 4), RED)]
     if star:
-        flag.append(Sh(kit.star_pts(5.2, 2.3, fx + 12, fy - 19), WHITE))
-    g.add([line([(fx, fy), (fx, fy - 26)], "#8A5A30", 1.8)] + flag, x + y + Sz + 3)
+        flag.append(Sh(kit.star_pts(5.2, 2.3, fx + 12, fy - 16), WHITE))
+    g.add([line([(fx, fy), (fx, fy - 22)], "#8A5A30", 1.8)] + flag, x + y + Sz + 3)
     return g.shapes()
 
 
@@ -514,9 +507,9 @@ def crab_sprite(col=CRAB, hat=False):
     o.append(Sh(crs([(-36, -36), (-27, -38), (-22, -46), (-28, -55), (-38, -52), (-42, -44)], 4), col, cel=.7))
     o.append(Sh(crs([(-40, -52), (-46, -62), (-38, -64), (-33, -56)], 3), col, cel=.5))
     if hat:
-        o.append(oval(-2, -45, 15, 4.4, col="#F2C76B", rot=-8))
-        o.append(Sh(crs([(-10, -46), (-9, -56), (-2, -60), (6, -56), (6, -47)], 4), "#F2C76B", cel=.6))
-        o.append(Sh([(-9.6, -48.5), (6.2, -50.7), (6.2, -47.4), (-9.8, -45.6)], RED))
+        o += transform([oval(-2, -45, 15, 4.4, col="#F2C76B", rot=-8),
+                        Sh(crs([(-10, -46), (-9, -56), (-2, -60), (6, -56), (6, -47)], 4), "#F2C76B", cel=.6),
+                        Sh([(-9.6, -48.5), (6.2, -50.7), (6.2, -47.4), (-9.8, -45.6)], RED)], s=1.35, about=(-2, -44), dy=-3)
     return o
 
 
@@ -824,10 +817,10 @@ def scene():
 
 
 # hide spots: (centre in scene px, size in scene px, the thing drawn in front of part of him, tint)
-HIDES = [((160, 306), 44, "castle", "sand"), ((418, 312), 42, "boat", "blue"), ((316, 272), 40, "ball", "white")]
+HIDES = [((176, 326), 44, "castle", "sand"), ((422, 312), 42, "boat", "blue"), ((326, 276), 40, "ball", "white")]
 
 # for `build.py preview`: the changed version shows these
-PREVIEW_CHANGES = [("crab", 0), ("castle", 0), ("umbrella", 1), ("boat", 1), ("shells", 0), ("dolphin", "extra:dolphin")]
+PREVIEW_CHANGES = [("crab", 0), ("umbrella", 1), ("boat", 1), ("palm", 1), ("swimring", 0), ("sun", 0), ("ball2", "extra:ball2")]
 
 
 if __name__ == "__main__":
