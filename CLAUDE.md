@@ -42,6 +42,7 @@
   規則和畫畫小鎮的 `CLAUDE.md` 一樣；那個帳號每月 2,000 分鐘是所有私有專案共用的，Mac 主機的 1 分鐘算 10 分鐘。
 
 ## Git
+- **發布新版本、做成可以安裝的 APK、給下載 QR code**：照 skill `release-kids-app`（`.claude/skills/release-kids-app/SKILL.md`），七個兄弟 APP 共用同一份；新 APP 開始時把這個資料夾複製過去。
 - 在系統指定的 `claude/...` 工作分支上開發，commit 完就推這個分支。
 - commit 訊息用英文寫清楚改了什麼和為什麼，結尾加系統要求的署名行。不要寫模型名稱。
 - 不能 commit：金鑰、密碼、不公開的文件。
