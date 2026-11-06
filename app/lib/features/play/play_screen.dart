@@ -105,7 +105,8 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
     super.initState();
     _sounds = ref.read(soundsProvider);
     _random = ref.read(randomProvider);
-    _sounds.hold(this, Track(Music.play, _place));
+    _sounds.hold(this, Music.play);
+    _sounds.play('amb_${_place.name}');
     _deal();
     WidgetsBinding.instance.addPostFrameCallback((_) => _ask());
   }

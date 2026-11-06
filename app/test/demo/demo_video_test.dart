@@ -36,15 +36,14 @@ const _captionHeight = 84.0;
 const _fps = 10;
 const _demo = bool.fromEnvironment('DEMO');
 
-/// The music, the place's sounds and the short sounds asked for, with the
-/// frame they were asked at.
+/// The music and the sounds asked for, with the frame they were asked at.
 class _Recording implements Sounds {
   _Recording(this.frame);
 
   final int Function() frame;
   final lines = <String>[];
-  final _holders = TrackHolders();
-  Track? _playing;
+  final _holders = MusicHolders();
+  Music? _playing;
 
   @override
   set music(bool on) {}
@@ -56,8 +55,8 @@ class _Recording implements Sounds {
   void play(String sfx) => lines.add('${frame()} sfx $sfx');
 
   @override
-  void hold(Object owner, Track? track) {
-    _holders.hold(owner, track);
+  void hold(Object owner, Music? music) {
+    _holders.hold(owner, music);
     _changed();
   }
 
@@ -70,9 +69,8 @@ class _Recording implements Sounds {
   void _changed() {
     final now = _holders.current;
     if (now == _playing) return;
-    if (now?.music != _playing?.music) lines.add('${frame()} music ${now?.music.file ?? '-'}');
-    if (now?.ambience != _playing?.ambience) lines.add('${frame()} amb ${now?.ambience ?? '-'}');
     _playing = now;
+    lines.add('${frame()} music ${now?.file ?? '-'}');
   }
 }
 

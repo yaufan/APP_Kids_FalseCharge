@@ -2,8 +2,7 @@
 """Puts the music and sounds under the demo video.
 
 test/demo/demo_video_test.dart writes, next to the silent video, which music
-(and which place's sounds: birds, waves) the app asked for and which sounds
-it played, frame by frame
+the app asked for and which sounds it played, frame by frame
 (app/build/demo/sounds.txt). This mixes the same files from app/assets/sounds
 into one track, at about the app's own balance, and writes
 app/build/demo/demo.mp4.
@@ -21,7 +20,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 DEMO = ROOT / "app/build/demo"
 SOUNDS = ROOT / "app/assets/sounds"
 RATE = 22050
-MUSIC_GAIN, AMB_GAIN, SFX_GAIN = 0.5, 0.45, 0.85
+MUSIC_GAIN, SFX_GAIN = 0.5, 0.85
 FADE = 0.35  # seconds, when the music changes
 
 
@@ -44,9 +43,8 @@ def main():
     frames = int(lines[1].split()[1])
     total = int(frames / fps * RATE) + RATE
     music = np.zeros(total)
-    amb = np.zeros(total)
     sfx = np.zeros(total)
-    changes = {"music": [], "amb": []}
+    changes = []
     cache = {}
     for line in lines[2:]:
         if not line.strip():
@@ -58,23 +56,21 @@ def main():
             end = min(total, at + len(s))
             sfx[at:end] += s[: end - at]
         else:
-            changes[kind].append((at, None if name == "-" else name))
-    # Each piece of music (and each place's sounds) loops from its start
-    # until the next one.
+            changes.append((at, None if name == "-" else name))
+    # Each piece of music loops from its start until the next one.
+    changes.append((total, None))
     fade = int(FADE * RATE)
-    for kind, layer in (("music", music), ("amb", amb)):
-        steps = changes[kind] + [(total, None)]
-        for (start, name), (end, _) in zip(steps, steps[1:]):
-            if name is None or end <= start:
-                continue
-            loop = cache.setdefault(name, load(name))
-            n = end - start
-            piece = np.tile(loop, n // len(loop) + 1)[:n].copy()
-            ramp = min(fade, n // 2)
-            piece[:ramp] *= np.linspace(0, 1, ramp)
-            piece[n - ramp:] *= np.linspace(1, 0, ramp)
-            layer[start:end] += piece
-    mix = music * MUSIC_GAIN + amb * AMB_GAIN + sfx * SFX_GAIN
+    for (start, name), (end, _) in zip(changes, changes[1:]):
+        if name is None or end <= start:
+            continue
+        loop = cache.setdefault(name, load(name))
+        n = end - start
+        piece = np.tile(loop, n // len(loop) + 1)[:n].copy()
+        ramp = min(fade, n // 2)
+        piece[:ramp] *= np.linspace(0, 1, ramp)
+        piece[n - ramp:] *= np.linspace(1, 0, ramp)
+        music[start:end] += piece
+    mix = music * MUSIC_GAIN + sfx * SFX_GAIN
     peak = np.abs(mix).max()
     if peak > 0.95:
         mix *= 0.95 / peak

@@ -31,7 +31,8 @@ class _PlaceScreenState extends ConsumerState<PlaceScreen> {
   void initState() {
     super.initState();
     _sounds = ref.read(soundsProvider);
-    _sounds.hold(this, Track(Music.home, widget.place));
+    _sounds.hold(this, Music.home);
+    _sounds.play('amb_${widget.place.name}');
     WidgetsBinding.instance.addPostFrameCallback((_) => _say(Strings.placeAsk(widget.place)));
   }
 

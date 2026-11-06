@@ -33,7 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _sounds = ref.read(soundsProvider);
-    _sounds.hold(this, const Track(Music.home));
+    _sounds.hold(this, Music.home);
     if (ref.read(onceProvider).add('welcome')) WidgetsBinding.instance.addPostFrameCallback((_) => _say(Strings.welcome));
   }
 

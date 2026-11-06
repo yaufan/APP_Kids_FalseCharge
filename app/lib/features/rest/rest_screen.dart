@@ -29,7 +29,7 @@ class _RestScreenState extends ConsumerState<RestScreen> {
   void initState() {
     super.initState();
     _sounds = ref.read(soundsProvider);
-    _sounds.hold(this, const Track(Music.rest));
+    _sounds.hold(this, Music.rest);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _sounds.play('rest');

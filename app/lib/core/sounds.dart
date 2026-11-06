@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/widgets.dart';
 
-import 'content.dart';
-
 /// The music (design/sounds/make_sounds.py): the home page, playing, and
 /// the quiet one for resting.
 enum Music {
@@ -17,47 +15,31 @@ enum Music {
   final String file;
 }
 
-/// What a screen wants to hear: a tune, and (in a place) its sounds — birds
-/// in the park, waves at the beach.
-class Track {
-  const Track(this.music, [this.place]);
-
-  final Music music;
-  final Place? place;
-
-  String? get ambience => place == null ? null : 'amb_${place!.name}';
-
-  @override
-  bool operator ==(Object other) => other is Track && other.music == music && other.place == place;
-
-  @override
-  int get hashCode => Object.hash(music, place);
-}
-
-/// Short sounds are named by their file in assets/sounds/ (tap, found, miss…).
+/// Short sounds are named by their file in assets/sounds/ (tap, found, miss…;
+/// `amb_<place>` is a place's own sound — birds, waves — played as it opens).
 abstract interface class Sounds {
   set music(bool on);
   set effects(bool on);
 
   void play(String sfx);
 
-  /// [owner] (a screen) wants [track]; the one asked for last plays.
-  void hold(Object owner, Track? track);
+  /// [owner] (a screen) wants [music]; the one asked for last plays.
+  void hold(Object owner, Music? music);
 
   void release(Object owner);
 }
 
-class TrackHolders {
-  final _holders = <Object, Track?>{};
+class MusicHolders {
+  final _holders = <Object, Music?>{};
 
-  void hold(Object owner, Track? track) {
+  void hold(Object owner, Music? music) {
     _holders.remove(owner);
-    _holders[owner] = track;
+    _holders[owner] = music;
   }
 
   void release(Object owner) => _holders.remove(owner);
 
-  Track? get current => _holders.isEmpty ? null : _holders.values.last;
+  Music? get current => _holders.isEmpty ? null : _holders.values.last;
 }
 
 class SilentSounds implements Sounds {
@@ -73,7 +55,7 @@ class SilentSounds implements Sounds {
   void play(String sfx) {}
 
   @override
-  void hold(Object owner, Track? track) {}
+  void hold(Object owner, Music? music) {}
 
   @override
   void release(Object owner) {}
@@ -82,9 +64,9 @@ class SilentSounds implements Sounds {
 /// Remembers the sounds played (tests).
 class RecordingSounds implements Sounds {
   final played = <String>[];
-  final _holders = TrackHolders();
+  final _holders = MusicHolders();
 
-  Track? get track => _holders.current;
+  Music? get music => _holders.current;
 
   @override
   set music(bool on) {}
@@ -96,29 +78,27 @@ class RecordingSounds implements Sounds {
   void play(String sfx) => played.add(sfx);
 
   @override
-  void hold(Object owner, Track? track) => _holders.hold(owner, track);
+  void hold(Object owner, Music? music) => _holders.hold(owner, music);
 
   @override
   void release(Object owner) => _holders.release(owner);
 }
 
 /// Plays through audioplayers: a pool per sound, one looping player for the
-/// music and one for the place's sounds; quiet while the app is in the
-/// background.
+/// music; quiet while the app is in the background.
 class SystemSounds implements Sounds {
   SystemSounds() {
     _lifecycle = AppLifecycleListener(onHide: () => _setAway(true), onShow: () => _setAway(false));
   }
 
-  static const _sfxVolume = 0.85, _musicVolume = 0.35, _ambienceVolume = 0.3;
+  static const _sfxVolume = 0.85, _musicVolume = 0.35;
 
   late final AppLifecycleListener _lifecycle;
   final _pools = <String, Future<AudioPool>>{};
-  final _holders = TrackHolders();
+  final _holders = MusicHolders();
   Future<void>? _setUp;
-  AudioPlayer? _loop, _amb;
+  AudioPlayer? _loop;
   Music? _playing;
-  String? _ambPlaying;
   var _music = true, _effects = true, _away = false;
 
   @override
@@ -156,8 +136,8 @@ class SystemSounds implements Sounds {
   }
 
   @override
-  void hold(Object owner, Track? track) {
-    _holders.hold(owner, track);
+  void hold(Object owner, Music? music) {
+    _holders.hold(owner, music);
     _update();
   }
 
@@ -168,32 +148,20 @@ class SystemSounds implements Sounds {
   }
 
   void _update() {
-    final track = _away ? null : _holders.current;
-    final music = _music ? track?.music : null;
-    // The place's sounds go with the effects switch (they are not music).
-    final amb = _effects ? track?.ambience : null;
-    if (music != _playing) {
-      _playing = music;
-      unawaited(_switchMusic(music));
-    }
-    if (amb != _ambPlaying) {
-      _ambPlaying = amb;
-      unawaited(_switchAmbience(amb));
-    }
+    final wanted = !_music || _away ? null : _holders.current;
+    if (wanted == _playing) return;
+    _playing = wanted;
+    unawaited(_switchTo(wanted));
   }
 
-  Future<AudioPlayer> _looping(AudioPlayer? p, void Function(AudioPlayer) keep) async {
-    if (p != null) return p;
-    final made = AudioPlayer();
-    keep(made);
-    await made.setReleaseMode(ReleaseMode.loop);
-    return made;
-  }
-
-  Future<void> _switchMusic(Music? music) async {
+  Future<void> _switchTo(Music? music) async {
     try {
       await _ready();
-      final loop = await _looping(_loop, (p) => _loop = p);
+      var loop = _loop;
+      if (loop == null) {
+        loop = _loop = AudioPlayer();
+        await loop.setReleaseMode(ReleaseMode.loop);
+      }
       await loop.stop();
       if (music == null || music != _playing) return;
       await loop.setVolume(_musicVolume);
@@ -201,20 +169,8 @@ class SystemSounds implements Sounds {
     } catch (_) {}
   }
 
-  Future<void> _switchAmbience(String? file) async {
-    try {
-      await _ready();
-      final loop = await _looping(_amb, (p) => _amb = p);
-      await loop.stop();
-      if (file == null || file != _ambPlaying) return;
-      await loop.setVolume(_ambienceVolume);
-      await loop.play(AssetSource('sounds/$file.wav'));
-    } catch (_) {}
-  }
-
   void dispose() {
     _lifecycle.dispose();
     unawaited(_loop?.dispose());
-    unawaited(_amb?.dispose());
   }
 }
