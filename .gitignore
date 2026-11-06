@@ -1,0 +1,8 @@
+# Signing keys never go in git.
+*.p12
+*.jks
+*.keystore
+key.properties
+
+__pycache__/
+*.pyc
