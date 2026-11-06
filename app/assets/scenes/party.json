@@ -1,0 +1,506 @@
+{
+ "id": "party",
+ "zh": "生日派對",
+ "en": "birthday party",
+ "objects": [
+  {
+   "id": "table",
+   "zh": "桌子",
+   "en": "table",
+   "x": 0.47833,
+   "y": 0.44083,
+   "w": 0.23667,
+   "h": 0.21833,
+   "z": 133,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "table_blue",
+     "said": "桌巾變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "table_dots",
+     "said": "桌巾變成點點了！"
+    }
+   ]
+  },
+  {
+   "id": "cake",
+   "zh": "生日蛋糕",
+   "en": "birthday cake",
+   "x": 0.48,
+   "y": 0.34917,
+   "w": 0.16,
+   "h": 0.165,
+   "z": 139,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "cake_choc",
+     "said": "蛋糕變成巧克力蛋糕了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "cake_four",
+     "said": "蛋糕的蠟燭多了一根！"
+    },
+    {
+     "kind": "gone",
+     "said": "蛋糕不見了！"
+    }
+   ]
+  },
+  {
+   "id": "juice",
+   "zh": "果汁",
+   "en": "juice",
+   "x": 0.53917,
+   "y": 0.40083,
+   "w": 0.07167,
+   "h": 0.095,
+   "z": 143,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "juice_grape",
+     "said": "果汁變成紫色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "果汁不見了！"
+    }
+   ]
+  },
+  {
+   "id": "cookies",
+   "zh": "餅乾",
+   "en": "cookies",
+   "x": 0.45,
+   "y": 0.43583,
+   "w": 0.07333,
+   "h": 0.05167,
+   "z": 144,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "cookies_two",
+     "said": "餅乾少了兩片！"
+    },
+    {
+     "kind": "gone",
+     "said": "餅乾不見了！"
+    }
+   ]
+  },
+  {
+   "id": "balloons",
+   "zh": "氣球",
+   "en": "balloons",
+   "x": 0.86833,
+   "y": 0.2925,
+   "w": 0.19333,
+   "h": 0.395,
+   "z": 186,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "balloons_blue",
+     "said": "紅氣球變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "balloons_two",
+     "said": "氣球少了一顆！"
+    },
+    {
+     "kind": "gone",
+     "said": "氣球不見了！"
+    }
+   ]
+  },
+  {
+   "id": "window",
+   "zh": "窗戶",
+   "en": "window",
+   "x": 0.67667,
+   "y": 0.33667,
+   "w": 0.13,
+   "h": 0.18,
+   "z": 3,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "window_blue",
+     "said": "窗簾變成藍色了！"
+    }
+   ]
+  },
+  {
+   "id": "clock",
+   "zh": "時鐘",
+   "en": "clock",
+   "x": 0.44667,
+   "y": 0.1925,
+   "w": 0.06,
+   "h": 0.085,
+   "z": 4,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "clock_yellow",
+     "said": "時鐘變成黃色了！"
+    },
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "clock_late",
+     "said": "時鐘的指針轉了！"
+    },
+    {
+     "kind": "gone",
+     "said": "時鐘不見了！"
+    }
+   ]
+  },
+  {
+   "id": "garland",
+   "zh": "星星吊飾",
+   "en": "star garland",
+   "x": 0.21417,
+   "y": 0.33333,
+   "w": 0.20167,
+   "h": 0.16,
+   "z": 5,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "garland_pink",
+     "said": "星星變成粉紅色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "garland_fewer",
+     "said": "星星少了兩顆！"
+    },
+    {
+     "kind": "gone",
+     "said": "星星不見了！"
+    }
+   ]
+  },
+  {
+   "id": "lamp",
+   "zh": "檯燈",
+   "en": "lamp",
+   "x": 0.34417,
+   "y": 0.32667,
+   "w": 0.07167,
+   "h": 0.10667,
+   "z": 100,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "lamp_blue",
+     "said": "檯燈變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "檯燈不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.35,
+     "said": "檯燈變大了！"
+    }
+   ]
+  },
+  {
+   "id": "hats",
+   "zh": "派對帽",
+   "en": "party hats",
+   "x": 0.28417,
+   "y": 0.37917,
+   "w": 0.07167,
+   "h": 0.085,
+   "z": 128,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "hats_blue",
+     "said": "派對帽變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "hats_dots",
+     "said": "派對帽變成點點了！"
+    },
+    {
+     "kind": "gone",
+     "said": "派對帽不見了！"
+    }
+   ]
+  },
+  {
+   "id": "present",
+   "zh": "大禮物",
+   "en": "big present",
+   "x": 0.27917,
+   "y": 0.50833,
+   "w": 0.12167,
+   "h": 0.14333,
+   "z": 171,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "present_blue",
+     "said": "紅色的禮物變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "present_one",
+     "said": "禮物少了一個！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "present_dots",
+     "said": "禮物變成點點了！"
+    }
+   ]
+  },
+  {
+   "id": "gifts",
+   "zh": "小禮物",
+   "en": "little presents",
+   "x": 0.19417,
+   "y": 0.59583,
+   "w": 0.105,
+   "h": 0.09833,
+   "z": 231,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "gifts_purple",
+     "said": "黃色的小禮物變成紫色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "gifts_one",
+     "said": "小禮物少了一個！"
+    },
+    {
+     "kind": "gone",
+     "said": "小禮物不見了！"
+    }
+   ]
+  },
+  {
+   "id": "teddy",
+   "zh": "小熊",
+   "en": "teddy bear",
+   "x": 0.69167,
+   "y": 0.5775,
+   "w": 0.12333,
+   "h": 0.24167,
+   "z": 277,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "teddy_pink",
+     "said": "小熊變成粉紅色了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小熊轉向另一邊了！"
+    },
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "teddy_wow",
+     "said": "小熊嚇了一跳！"
+    },
+    {
+     "kind": "gone",
+     "said": "小熊不見了！"
+    }
+   ]
+  },
+  {
+   "id": "cat",
+   "zh": "小貓",
+   "en": "cat",
+   "x": 0.51417,
+   "y": 0.70083,
+   "w": 0.14833,
+   "h": 0.135,
+   "z": 328,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "cat_dog",
+     "said": "小貓變成小狗了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小貓轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小貓不見了！"
+    }
+   ]
+  },
+  {
+   "id": "car",
+   "zh": "小汽車",
+   "en": "toy car",
+   "x": 0.34333,
+   "y": 0.6675,
+   "w": 0.14,
+   "h": 0.13167,
+   "z": 312,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "car_yellow",
+     "said": "小汽車變成黃色了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小汽車轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小汽車不見了！"
+    }
+   ]
+  }
+ ],
+ "extras": [
+  {
+   "id": "balloon2",
+   "zh": "綠氣球",
+   "en": "green balloon",
+   "x": 0.14833,
+   "y": 0.12167,
+   "w": 0.11667,
+   "h": 0.23,
+   "z": 1,
+   "big": true,
+   "said": "天上多了一顆氣球！"
+  },
+  {
+   "id": "confetti",
+   "zh": "彩色紙花",
+   "en": "confetti",
+   "x": 0.65333,
+   "y": 0.07917,
+   "w": 0.15333,
+   "h": 0.15833,
+   "z": 2,
+   "big": true,
+   "said": "多了好多彩色紙花！"
+  },
+  {
+   "id": "puppy",
+   "zh": "小狗",
+   "en": "puppy",
+   "x": 0.84917,
+   "y": 0.5425,
+   "w": 0.09833,
+   "h": 0.12833,
+   "z": 216,
+   "big": false,
+   "said": "多了一隻小狗！"
+  }
+ ],
+ "hides": [
+  {
+   "x": 0.3333,
+   "y": 0.4367,
+   "w": 0.0667,
+   "h": 0.0667,
+   "z": 170,
+   "tint": "wood"
+  },
+  {
+   "x": 0.25,
+   "y": 0.5633,
+   "w": 0.0667,
+   "h": 0.0667,
+   "z": 230,
+   "tint": "red"
+  },
+  {
+   "x": 0.3967,
+   "y": 0.3867,
+   "w": 0.0633,
+   "h": 0.0633,
+   "z": 138,
+   "tint": "white"
+  }
+ ],
+ "lineup": {
+  "art": "cupcake",
+  "zh": "杯子蛋糕",
+  "w": 0.2,
+  "h": 0.2,
+  "odd": [
+   {
+    "kind": "art",
+    "type": "color",
+    "art": "cupcake_blue",
+    "said": "這個杯子蛋糕是藍色的！"
+   },
+   {
+    "kind": "art",
+    "art": "cupcake_cherry",
+    "said": "這個杯子蛋糕多了一顆櫻桃！"
+   },
+   {
+    "kind": "art",
+    "type": "pattern",
+    "art": "cupcake_sprinkles",
+    "said": "這個杯子蛋糕有彩色糖粒！"
+   }
+  ]
+ }
+}
