@@ -1,0 +1,495 @@
+{
+ "id": "park",
+ "zh": "公園",
+ "en": "park",
+ "objects": [
+  {
+   "id": "tree",
+   "zh": "大樹",
+   "en": "tree",
+   "x": 0.5025,
+   "y": 0.31833,
+   "w": 0.19167,
+   "h": 0.24,
+   "z": 61,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "tree_autumn",
+     "said": "大樹變成橘色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "tree_apples",
+     "said": "樹上的蘋果變少了！"
+    },
+    {
+     "kind": "size",
+     "scale": 0.75,
+     "said": "大樹變小了！"
+    }
+   ]
+  },
+  {
+   "id": "slide",
+   "zh": "溜滑梯",
+   "en": "slide",
+   "x": 0.265,
+   "y": 0.36333,
+   "w": 0.25,
+   "h": 0.32333,
+   "z": 81,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "slide_green",
+     "said": "溜滑梯變成綠色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "溜滑梯不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "溜滑梯轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "swing",
+   "zh": "鞦韆",
+   "en": "swing",
+   "x": 0.70583,
+   "y": 0.33833,
+   "w": 0.17167,
+   "h": 0.21667,
+   "z": 66,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "swing_blue",
+     "said": "鞦韆變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "鞦韆不見了！"
+    }
+   ]
+  },
+  {
+   "id": "bench",
+   "zh": "長椅",
+   "en": "bench",
+   "x": 0.665,
+   "y": 0.53917,
+   "w": 0.15667,
+   "h": 0.15167,
+   "z": 181,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "bench_blue",
+     "said": "長椅變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "長椅不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "長椅轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "balloon",
+   "zh": "氣球",
+   "en": "balloon",
+   "x": 0.39667,
+   "y": 0.45833,
+   "w": 0.13333,
+   "h": 0.33333,
+   "z": 237,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "balloon_blue",
+     "said": "氣球變藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "氣球不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.3,
+     "said": "氣球變大了！"
+    }
+   ]
+  },
+  {
+   "id": "ducks",
+   "zh": "小鴨子",
+   "en": "ducks",
+   "x": 0.77583,
+   "y": 0.54083,
+   "w": 0.14833,
+   "h": 0.09833,
+   "z": 192,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "ducks_two",
+     "said": "小鴨子少了一隻！"
+    },
+    {
+     "kind": "flip",
+     "said": "小鴨子轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "lamp",
+   "zh": "路燈",
+   "en": "street lamp",
+   "x": 0.0925,
+   "y": 0.46333,
+   "w": 0.06167,
+   "h": 0.23,
+   "z": 197,
+   "big": false,
+   "changes": [
+    {
+     "kind": "gone",
+     "said": "路燈不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.3,
+     "said": "路燈變高了！"
+    }
+   ]
+  },
+  {
+   "id": "icecream",
+   "zh": "冰淇淋車",
+   "en": "ice-cream cart",
+   "x": 0.60167,
+   "y": 0.62333,
+   "w": 0.16333,
+   "h": 0.23,
+   "z": 288,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "icecream_blue",
+     "said": "冰淇淋車變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "icecream_dots",
+     "said": "陽傘變成點點了！"
+    },
+    {
+     "kind": "gone",
+     "said": "冰淇淋車不見了！"
+    }
+   ]
+  },
+  {
+   "id": "flowers",
+   "zh": "花",
+   "en": "flowers",
+   "x": 0.24667,
+   "y": 0.595,
+   "w": 0.14667,
+   "h": 0.14333,
+   "z": 218,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "flowers_yellow",
+     "said": "花變成黃色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "flowers_fewer",
+     "said": "花少了兩朵！"
+    },
+    {
+     "kind": "gone",
+     "said": "花不見了！"
+    }
+   ]
+  },
+  {
+   "id": "bike",
+   "zh": "腳踏車",
+   "en": "bicycle",
+   "x": 0.5,
+   "y": 0.71917,
+   "w": 0.19,
+   "h": 0.165,
+   "z": 360,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "bike_red",
+     "said": "腳踏車變成紅色了！"
+    },
+    {
+     "kind": "flip",
+     "said": "腳踏車轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "腳踏車不見了！"
+    }
+   ]
+  },
+  {
+   "id": "dog",
+   "zh": "小狗",
+   "en": "dog",
+   "x": 0.7325,
+   "y": 0.61917,
+   "w": 0.16833,
+   "h": 0.145,
+   "z": 280,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "dog_white",
+     "said": "小狗變成白色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小狗不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小狗轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "cat",
+   "zh": "小貓",
+   "en": "cat",
+   "x": 0.32833,
+   "y": 0.60083,
+   "w": 0.12667,
+   "h": 0.18833,
+   "z": 282,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "cat_rabbit",
+     "said": "小貓變成小兔子了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小貓轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小貓不見了！"
+    }
+   ]
+  },
+  {
+   "id": "ball",
+   "zh": "球",
+   "en": "ball",
+   "x": 0.53,
+   "y": 0.51583,
+   "w": 0.05667,
+   "h": 0.07167,
+   "z": 176,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "ball_blue",
+     "said": "球變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "ball_dots",
+     "said": "球變成點點了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.5,
+     "said": "球變大了！"
+    }
+   ]
+  },
+  {
+   "id": "kite",
+   "zh": "風箏",
+   "en": "kite",
+   "x": 0.18,
+   "y": 0.095,
+   "w": 0.13,
+   "h": 0.18,
+   "z": 2,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "kite_blue",
+     "said": "風箏變成藍色和綠色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "kite_dots",
+     "said": "風箏變成點點了！"
+    },
+    {
+     "kind": "gone",
+     "said": "風箏不見了！"
+    }
+   ]
+  },
+  {
+   "id": "sun",
+   "zh": "太陽",
+   "en": "sun",
+   "x": 0.88333,
+   "y": 0.10333,
+   "w": 0.15667,
+   "h": 0.15667,
+   "z": 1,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "sun_wow",
+     "said": "太陽嚇了一跳！"
+    },
+    {
+     "kind": "gone",
+     "said": "太陽不見了！"
+    }
+   ]
+  }
+ ],
+ "extras": [
+  {
+   "id": "butterfly",
+   "zh": "蝴蝶",
+   "en": "butterfly",
+   "x": 0.50667,
+   "y": 0.08833,
+   "w": 0.12,
+   "h": 0.10333,
+   "z": 900,
+   "big": true,
+   "said": "多了一隻蝴蝶！"
+  },
+  {
+   "id": "balloon2",
+   "zh": "黃氣球",
+   "en": "yellow balloon",
+   "x": 0.87333,
+   "y": 0.325,
+   "w": 0.13,
+   "h": 0.24667,
+   "z": 3,
+   "big": true,
+   "said": "多了一個黃色的氣球！"
+  },
+  {
+   "id": "bird",
+   "zh": "小鳥",
+   "en": "bird",
+   "x": 0.31333,
+   "y": 0.08083,
+   "w": 0.10333,
+   "h": 0.06167,
+   "z": 4,
+   "big": false,
+   "said": "多了一隻小鳥！"
+  }
+ ],
+ "hides": [
+  {
+   "x": 0.1967,
+   "y": 0.5267,
+   "w": 0.0767,
+   "h": 0.0767,
+   "z": 217,
+   "tint": "leaf"
+  },
+  {
+   "x": 0.65,
+   "y": 0.52,
+   "w": 0.07,
+   "h": 0.07,
+   "z": 287,
+   "tint": "wood"
+  },
+  {
+   "x": 0.4367,
+   "y": 0.67,
+   "w": 0.0733,
+   "h": 0.0733,
+   "z": 359,
+   "tint": "sand"
+  }
+ ],
+ "lineup": {
+  "art": "duck",
+  "zh": "小鴨子",
+  "w": 0.2,
+  "h": 0.2,
+  "odd": [
+   {
+    "kind": "art",
+    "type": "color",
+    "art": "duck_blue",
+    "said": "這隻小鴨是藍色的！"
+   },
+   {
+    "kind": "art",
+    "art": "duck_hat",
+    "said": "這隻小鴨戴了帽子！"
+   },
+   {
+    "kind": "flip",
+    "said": "這隻小鴨轉向另一邊！"
+   }
+  ]
+ }
+}

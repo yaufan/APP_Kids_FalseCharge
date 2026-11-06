@@ -4,6 +4,7 @@
     python3 build.py park                       # one scene (and 小變): art + app/assets/scenes/park.json
     python3 build.py all                        # 小變 and every scene_<name>.py in this folder
     python3 build.py check                      # only the checks (flutter_svg rules + docs/scenes.md)
+    python3 build.py layout park                # boxes, overlaps and puzzle counts, without writing files
     python3 build.py preview park OUT.png       # contact sheet: the scene in a/b/c, a changed version,
                                                 # 小變 hiding in it, 小變's poses and hides, the lineup;
                                                 # also OUT_things.png: every thing and variant
@@ -17,17 +18,20 @@ PREVIEW_CHANGES [(thing id, change index or "extra:<id>")] used by `preview` for
 Previews and the comparison need Node.js with Playwright (Chromium); the comparison needs Flutter at
 /home/user/flutter/bin (or $FLUTTER) and the pub cache that the sibling apps already filled.
 """
-import html
+import sys
+
+sys.dont_write_bytecode = True      # no __pycache__ in design/art
+
+import html  # noqa: E402
 import importlib
 import json
 import os
 import pathlib
 import shutil
 import subprocess
-import sys
 import tempfile
 
-import kit
+import kit  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
 RENDER_JS = kit.ROOT / "docs" / "mockups" / "render.js"
@@ -151,6 +155,12 @@ def preview(sid, out):
             extras.append(which[6:])
         else:
             changes.append((tid, objs[tid]["changes"][which]))
+    boxes = [(tid, kit._diff_box(objs[tid], c)) for tid, c in changes]
+    boxes += [(e["id"], (e["x"], e["y"], e["w"], e["h"])) for e in data["extras"] if e["id"] in extras]
+    for i, (a, ba) in enumerate(boxes):
+        for b, bb in boxes[i + 1:]:
+            if kit._overlaps(ba, bb):
+                print(f"preview: the changes of {a} and {b} overlap (the app would not pick them together)")
     S = 560
     rows = ["<h2>" + html.escape(f"{data['zh']} {sid}: a / b / c") + "</h2>"]
     rows.append('<div class="row">' + "".join(_cell(composite(sid, st, S), st) for st in kit.STYLES) + "</div>")
@@ -313,7 +323,7 @@ def fluttercheck(which="all", keep=False, px=260):
             big = D > 60
             core = big[1:-1, 1:-1] & big[:-2, 1:-1] & big[2:, 1:-1] & big[1:-1, :-2] & big[1:-1, 2:]
             rows.append((core.mean(), D.mean() / 255, f))
-        rows.sort(key=lambda r: -r[0])
+        rows.sort(key=lambda r: (-r[0], -r[1]))
         bad = [r for r in rows if r[0] > .004]
         print(f"fluttercheck: {len(files)} files; worst:")
         for frac, mean, f in rows[:8]:
@@ -326,6 +336,26 @@ def fluttercheck(which="all", keep=False, px=260):
     finally:
         if not keep:
             shutil.rmtree(work, ignore_errors=True)
+
+
+def layout(sid):
+    """Print each thing's box (scene px), the boxes that overlap, and how many differences the app's
+    puzzle picking always finds (kit.pick_stats), without writing any file."""
+    sa = scene_module(sid).scene()
+    sa.boxes()
+    data = sa.json()
+    items = data["objects"] + data["extras"]
+    for o in items:
+        x0, y0 = (o["x"] - o["w"] / 2) * 600, (o["y"] - o["h"] / 2) * 600
+        print(f"  {o['id']:10s} {'BIG' if o['big'] else '   '} x {x0:5.0f}..{x0 + o['w'] * 600:5.0f}  y {y0:5.0f}..{y0 + o['h'] * 600:5.0f}"
+              f"  w {o['w']:.3f} h {o['h']:.3f} z {o['z']}")
+    print("overlapping (with the app's gap):")
+    for i, a in enumerate(items):
+        for b in items[i + 1:]:
+            if kit._overlaps((a["x"], a["y"], a["w"], a["h"]), (b["x"], b["y"], b["w"], b["h"])):
+                tag = "BIG+BIG" if a["big"] and b["big"] else ""
+                print(f"  {a['id']} / {b['id']} {tag}")
+    print("fewest differences found:", kit.pick_stats(data))
 
 
 def main(argv):
@@ -342,6 +372,8 @@ def main(argv):
         check_all()
     elif cmd == "check":
         check_all()
+    elif cmd == "layout":
+        layout(argv[1])
     elif cmd == "preview":
         preview(argv[1], argv[2])
     elif cmd == "fluttercheck":

@@ -31,14 +31,14 @@ HOW TO DRAW (see scene_park.py for a full scene, chameleon.py for a character)
 
 Coordinates are output units: for scene art, the scene's 600 x 600 pixels; for 小變, 200 x 200.
 
-    iso = Iso(k=1.25, ox=300, oy=178)          # world (x right-front, y left-front, z up) -> scene px
+    iso = Iso(k=1.5, ox=300, oy=186)           # world (x right-front, y left-front, z up) -> scene px
     g = Group()
     g.add(iso.shadow(50, 50, 20))              # each primitive returns a list of Sh
     g.add(iso.box(40, 40, 0, 20, 20, 30, "#FF7A7A"), depth=iso.depth(50, 50))
     g.add(iso.ball(50, 50, 30, 12, "#5BC46A"), depth=iso.depth(50, 50) + 1)
     g.add(iso.sprite(dog_shapes, 80, 60, 0, s=.5))   # a 2D sprite (origin at its feet) stood on the ground
     shapes = g.shapes()                        # sorted back to front (depth, then insertion order)
-    svg = render(shapes, "b", box=(x0, y0, w, h), seed="park/dog")
+    svg = render(shapes, "b", box=(x0, y0, w, h))   # viewBox 0 0 w h; SceneArt does this for you
 
 Shapes (`Sh`): a closed polygon (filled) or an open polyline (a stroke of width `w`), one colour
 (the style-A colour; b and c derive theirs from it), and hints for the renderers:
@@ -48,7 +48,11 @@ Shapes (`Sh`): a closed polygon (filled) or an open polyline (a stroke of width 
     tag="shadow"   a ground shadow (A: soft dark, B: halftone dots, C: left out)
     tag="glow"     a soft light (A/B: pale and see-through, C: left out)
     tag="detail"   no crayon outline in C (highlights, spots)
+    tag="screen"   a big light area (a sky): B prints it as a halftone dot screen on the paper
     op=0.8         opacity
+    only="ab"      drawn only in these styles (e.g. scenery a child would draw more simply in C:
+                   give the C version only="c" at the same place). Never use it for a thing's
+                   look that matters to a puzzle.
 Ellipses keep their exact form (`ell`), so A and B write compact <ellipse> elements.
 
 Colours: pass plain hex colours. Things that a hiding 小變 must blend with use TINT[...] colours
@@ -64,10 +68,28 @@ shape's geometry, so the same drawing gives the same bytes on every run, and a c
 HOW TO ADD A SCENE: copy scene_park.py. It makes a SceneArt, gives it a background function, one
 function per thing and per variant (each returns shapes in scene px), changes with their `said`
 lines, extras, hide spots and the lineup, and calls `.build()`. Then
+    python3 build.py layout <scene>            # boxes, which boxes overlap, puzzle counts (no files)
     python3 build.py <scene>                   # writes art + JSON, runs the checks
     python3 build.py preview <scene> out.png   # look at it (bg + things in z order, a, b, c)
     python3 build.py fluttercheck <scene>      # draws every file with the real flutter_svg and
                                                # compares with Chromium (throw-away project in /dev/shm)
+
+What check_scene() enforces (besides the files and fields of docs/scenes.md):
+  - every art file exists in a, b and c, with the viewBox aspect of its box (the app draws each
+    thing with BoxFit.fill into its box, in z order; `size` scales about the bottom edge, `flip`
+    mirrors left-right); a `size` change must stay inside the picture;
+  - `big` things are at least 0.12 wide; at least 7 big things have a colour or gone change;
+  - the app's own puzzle picking (pick(), ported from lib/core/puzzles.dart: only big things below
+    4-5 years, one difference per thing, boxes kept GAP apart) always finds 1 / 3 / 5 differences
+    for 小小 / 中 / 大 in thousands of random tries: spread the big things apart until it does;
+  - every hide spot is square (the hide art is 200 x 200) and some thing with a higher z overlaps it
+    (older children find him partly hidden; for 2-3 years the app draws him on top).
+
+Lessons for a good scene: put tall things at the back and in a band of sky above the tile (sky
+things never overlap ground things); keep front things low; give 2-year-old changes to things that
+are big and plain (colour, gone); keep the background under about 60 KB in every style (big crayon
+areas and riso grain cost the most: use tag="screen" for the sky, one geometry for paths, and
+only="c" simplifications for fences and other fiddly scenery).
 """
 import colorsys
 import hashlib
@@ -331,6 +353,33 @@ def area(pts):
     return abs(s) / 2
 
 
+def perimeter(pts, closed=True):
+    seq = list(pts) + ([pts[0]] if closed else [])
+    return sum(math.hypot(x1 - x0, y1 - y0) for (x0, y0), (x1, y1) in zip(seq, seq[1:]))
+
+
+def thickness(pts):
+    """How thick a shape is (4 x area / perimeter): the diameter of a disc, about twice the width
+    of a long thin strip; a bounding box would call a thin diagonal rail big."""
+    p = perimeter(pts)
+    return 4 * area(pts) / p if p else 0.0
+
+
+def long_axis(pts):
+    """(angle in degrees of a shape's long axis, how much longer than wide it is)."""
+    m = len(pts)
+    mx = sum(p[0] for p in pts) / m
+    my = sum(p[1] for p in pts) / m
+    sxx = sum((p[0] - mx) ** 2 for p in pts) / m
+    syy = sum((p[1] - my) ** 2 for p in pts) / m
+    sxy = sum((p[0] - mx) * (p[1] - my) for p in pts) / m
+    ang = .5 * math.atan2(2 * sxy, sxx - syy)
+    tr, det = sxx + syy, sxx * syy - sxy * sxy
+    disc = math.sqrt(max(0.0, tr * tr / 4 - det))
+    l1, l2 = tr / 2 + disc, max(1e-9, tr / 2 - disc)
+    return math.degrees(ang), math.sqrt(l1 / l2)
+
+
 def inside(pt, pts):
     """Point in polygon (even-odd)."""
     x, y = pt
@@ -351,11 +400,12 @@ def bbox(pts):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def pd(pts, closed=True):
-    """SVG path data of a point list."""
+def pd(pts, closed=True, whole=False):
+    """SVG path data of a point list (whole=True: whole numbers, for wobbly crayon lines)."""
     if not pts:
         return ""
-    s = f"M{n(pts[0][0])},{n(pts[0][1])}L" + " ".join(f"{n(x)},{n(y)}" for x, y in pts[1:])
+    f = (lambda v: str(round(v))) if whole else n
+    s = f"M{f(pts[0][0])},{f(pts[0][1])}L" + " ".join(f"{f(x)},{f(y)}" for x, y in pts[1:])
     return s + ("Z" if closed else "")
 
 
@@ -363,14 +413,15 @@ def pd(pts, closed=True):
 class Sh:
     """One shape in output units: a filled polygon (closed) or a stroked polyline of width w.
     col is the style A colour. See the module docstring for cel / face / tag / op."""
-    __slots__ = ("pts", "col", "closed", "w", "cel", "face", "op", "tag", "ell")
+    __slots__ = ("pts", "col", "closed", "w", "cel", "face", "op", "tag", "ell", "base", "only")
 
-    def __init__(self, pts, col, closed=True, w=0.0, cel=0.0, face=None, op=1.0, tag=None, ell=None):
+    def __init__(self, pts, col, closed=True, w=0.0, cel=0.0, face=None, op=1.0, tag=None, ell=None, base=None, only=None):
         self.pts, self.col, self.closed, self.w = list(pts), col, closed, w
         self.cel, self.face, self.op, self.tag, self.ell = cel, face, op, tag, ell
+        self.base, self.only = base, only
 
     def copy(self, **kw):
-        s = Sh(self.pts, self.col, self.closed, self.w, self.cel, self.face, self.op, self.tag, self.ell)
+        s = Sh(self.pts, self.col, self.closed, self.w, self.cel, self.face, self.op, self.tag, self.ell, self.base, self.only)
         for k, v in kw.items():
             setattr(s, k, v)
         return s
@@ -400,7 +451,7 @@ class Sh:
                 base = math.degrees(math.atan2(b, a))
                 ell = (a * cx + c * cy + e, b * cx + d * cy + f, rx * s, ry * s, base + (rot if det > 0 else -rot))
         sc = math.sqrt(abs(det))
-        return Sh(pts, self.col, self.closed, self.w * sc, self.cel, self.face, self.op, self.tag, ell)
+        return Sh(pts, self.col, self.closed, self.w * sc, self.cel, self.face, self.op, self.tag, ell, self.base, self.only)
 
     def key(self):
         """A stable hash of the geometry (not the colour): seeds the crayon and grain noise."""
@@ -439,7 +490,15 @@ def transform(shapes, dx=0.0, dy=0.0, s=1.0, rot=0.0, flip=False, about=(0.0, 0.
 def recolor(shapes, cmap):
     """Swap colours: cmap {old hex: new hex} (exact, case-insensitive)."""
     m = {k.upper(): v for k, v in cmap.items()}
-    return [sh.copy(col=m.get(sh.col.upper(), sh.col)) for sh in shapes]
+    out = []
+    for sh in shapes:
+        if sh.base and sh.base.upper() in m:
+            nb = m[sh.base.upper()]
+            t, l, r = shades(nb)
+            out.append(sh.copy(base=nb, col={"top": t, "left": l, "right": r}.get(sh.face, nb)))
+        else:
+            out.append(sh.copy(col=m.get(sh.col.upper(), sh.col)))
+    return out
 
 
 def shapes_bbox(shapes):
@@ -482,16 +541,17 @@ class Iso:
         """Painter's depth of a world point: bigger = nearer the viewer (drawn later)."""
         return x + y + z * .01
 
-    def face(self, pts3, col, face=None, **kw):
-        return Sh([self.P(*p) for p in pts3], col, face=face, **kw)
+    def face(self, pts3, col, face=None, base=None, **kw):
+        return Sh([self.P(*p) for p in pts3], col, face=face, base=base, **kw)
 
     def box(self, x, y, z, w, d, h, col, top=None, left=None, right=None, **kw):
         """A box from (x, y, z) to (x+w, y+d, z+h): its three visible faces."""
         t, l, r = shades(col)
+        bt, bl, br = (None if top else col), (None if left else col), (None if right else col)   # overridden faces print their own colour
         t, l, r = top or t, left or l, right or r
-        return [self.face([(x, y + d, z), (x + w, y + d, z), (x + w, y + d, z + h), (x, y + d, z + h)], l, "left", **kw),
-                self.face([(x + w, y, z), (x + w, y + d, z), (x + w, y + d, z + h), (x + w, y, z + h)], r, "right", **kw),
-                self.face([(x, y, z + h), (x + w, y, z + h), (x + w, y + d, z + h), (x, y + d, z + h)], t, "top", **kw)]
+        return [self.face([(x, y + d, z), (x + w, y + d, z), (x + w, y + d, z + h), (x, y + d, z + h)], l, "left", bl, **kw),
+                self.face([(x + w, y, z), (x + w, y + d, z), (x + w, y + d, z + h), (x + w, y, z + h)], r, "right", br, **kw),
+                self.face([(x, y, z + h), (x + w, y, z + h), (x + w, y + d, z + h), (x, y + d, z + h)], t, "top", bt, **kw)]
 
     def flat(self, pts_xy, z, col, **kw):
         """A flat polygon lying on the plane at height z (a path, a rug, water)."""
@@ -515,7 +575,7 @@ class Iso:
         mid = k // 2
         left = lower[:mid + 1] + [(lower[mid][0], lower[mid][1] - hh), (lower[0][0], lower[0][1] - hh)]
         right = lower[mid:] + [(lower[-1][0], lower[-1][1] - hh), (lower[mid][0], lower[mid][1] - hh)]
-        return [Sh(left, l, face="left"), Sh(right, r, face="right"), oval(sx, sy - hh, rx, ry, t, face="top")]
+        return [Sh(left, l, face="left", base=col), Sh(right, r, face="right", base=col), oval(sx, sy - hh, rx, ry, t, face="top", base=col)]
 
     def ball(self, cx, cy, z, R, col, cel=1.0, sq=1.0):
         """A ball resting on height z (drawn as a round sprite with crescent shading in A)."""
@@ -526,15 +586,15 @@ class Iso:
     def pyramid(self, x, y, z, w, d, h, col):
         t, l, r = shades(col)
         apex = (x + w / 2, y + d / 2, z + h)
-        return [self.face([(x, y + d, z), (x + w, y + d, z), apex], l, "left"),
-                self.face([(x + w, y, z), (x + w, y + d, z), apex], r, "right")]
+        return [self.face([(x, y + d, z), (x + w, y + d, z), apex], l, "left", col),
+                self.face([(x + w, y, z), (x + w, y + d, z), apex], r, "right", col)]
 
     def ramp(self, x, y0, y1, z0, z1, w, th, col):
         """A slope running along +y (a slide chute): right side, front end, top."""
         t, l, r = shades(col)
-        return [self.face([(x + w, y0, z0), (x + w, y1, z1), (x + w, y1, z1 - th), (x + w, y0, z0 - th)], r, "right"),
-                self.face([(x, y1, z1), (x + w, y1, z1), (x + w, y1, z1 - th), (x, y1, z1 - th)], l, "left"),
-                self.face([(x, y0, z0), (x + w, y0, z0), (x + w, y1, z1), (x, y1, z1)], t, "top")]
+        return [self.face([(x + w, y0, z0), (x + w, y1, z1), (x + w, y1, z1 - th), (x + w, y0, z0 - th)], r, "right", col),
+                self.face([(x, y1, z1), (x + w, y1, z1), (x + w, y1, z1 - th), (x, y1, z1 - th)], l, "left", col),
+                self.face([(x, y0, z0), (x + w, y0, z0), (x + w, y1, z1), (x, y1, z1)], t, "top", col)]
 
     def line3(self, pts3, col, w, **kw):
         return line([self.P(*p) for p in pts3], col, w * self.k, **kw)
@@ -555,6 +615,17 @@ class Out:
     def id(self, p):
         self.nid += 1
         return f"{p}{self.nid}"
+
+    def stroke(self, d, col, w, op=1.0):
+        """A stroked line; joined into the previous one when it is painted the same way (fully
+        opaque only, so overlaps look the same): one element instead of many."""
+        ws = n(w) if w >= .95 else f"{max(w, .2):.2f}".lstrip("0")
+        key = (col, ws)
+        if op >= .999 and self.body and getattr(self, "_last", None) == (key, len(self.body)):
+            self.body[-1] = self.body[-1].replace('" fill="none"', d + '" fill="none"', 1)
+        else:
+            self.body.append(_stroke(d, col, w, op))
+        self._last = (key, len(self.body)) if op >= .999 else None
 
     def svg(self, w, h):
         defs = f"<defs>{''.join(self.defs)}</defs>" if self.defs else ""
@@ -610,7 +681,7 @@ def _render_a(o, shapes):
             o.body.append(f'{_geom(sh)} fill="{col}"{_op(.5 * sh.op, "fill-opacity")}/>')
             continue
         if not sh.closed:
-            o.body.append(_stroke(pd(sh.pts, False), col, sh.w, sh.op))
+            o.stroke(pd(sh.pts, False), col, sh.w, sh.op)
             continue
         x0, y0, x1, y1 = bbox(sh.pts)
         size = min(x1 - x0, y1 - y0)
@@ -644,9 +715,14 @@ INK_ORDER = "YPTB"                     # the anchor of a mix is its first ink in
 INK_OFF = {"Y": (0.0, 0.0), "P": (1.5, -1.1), "T": (-1.3, -.9), "B": (-1.3, 1.2)}   # misregistration
 PAPER_B = "#FBF6EC"
 PAPER_C = "#FFFFFF"
-DENS = (.15, .3, .5, .7, 1.0)
-RISO_OVERRIDE = {}                     # {A colour: {"P": .5, ...}} to force a mix for one colour
-GRAIN_AREA = 46.0                      # one grain speck per this many square units of ink
+DENS = (.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.0)
+# {A colour: {ink: density}}: force the mix for a colour (and the faces drawn from it). The game's
+# blue leans to violet, which the nearest mix would print with pink; it is meant to read as blue.
+RISO_OVERRIDE = {"#4C8DFF": {"B": .85}, "#5E9BFF": {"B": .75}, "#7FA8FF": {"B": .6}, "#7FC4FF": {"B": .5},
+                 # lawn greens print as a fresh yellow-green (the nearest mix is a dull sage)
+                 "#A3E487": {"Y": .7, "T": .3}, "#7FD06E": {"Y": .85, "T": .5}}
+FACE_DENS = {"top": .55, "left": 1.0, "right": 1.35}   # riso iso faces: the same inks, lighter or heavier
+GRAIN_AREA = 75.0                      # one grain speck per this many square units of full ink
 
 
 def ink_tint(ink, dens):
@@ -697,9 +773,9 @@ def _palette():
     for i, a in enumerate(inks):
         for j, b in enumerate(inks[i + 1:], i + 1):
             for c in inks[j + 1:]:
-                for da in DENS[2:]:
-                    for db in DENS[2:]:
-                        for dc in DENS[2:]:
+                for da in DENS[4::2]:
+                    for db in DENS[4::2]:
+                        for dc in DENS[4::2]:
                             combos.append({a: da, b: db, c: dc})
     for c in combos:
         col = ink_mix(c)
@@ -727,11 +803,23 @@ def riso_snap(col):
     for combo, c, (L2, a2, b2) in _palette():
         if not combo:
             continue
-        dist = .8 * (L - L2) ** 2 + (a - a2) ** 2 + (b - b2) ** 2 + 6 * (len(combo) - 1)
+        dist = (L - L2) ** 2 + (a - a2) ** 2 + (b - b2) ** 2 + 40 * (len(combo) - 1)
         if best is None or dist < best[0]:
             best = (dist, combo, c)
     _SNAP[key] = (best[1], best[2])
     return _SNAP[key]
+
+
+def riso_of(sh):
+    """(combo, colour) for a shape: iso faces print their base colour's inks lighter (top) or
+    heavier (right side); everything else snaps its own colour."""
+    if sh.face and sh.base:
+        combo, _ = riso_snap(sh.base)
+        f = FACE_DENS[sh.face]
+        combo = {i: min(1.0, round(d * f * 20) / 20) for i, d in combo.items()}
+        combo = {i: d for i, d in combo.items() if d > .04}
+        return combo, ink_mix(combo)
+    return riso_snap(sh.col)
 
 
 def _anchor(combo):
@@ -742,8 +830,9 @@ def _anchor(combo):
 
 
 def _halftone(o, sh, ink, dens, step=3.2):
-    """Halftone dots of one ink inside a shape (riso shadows)."""
+    """Halftone dots of one ink inside a shape (riso shadows); big shapes get a coarser screen."""
     x0, y0, x1, y1 = bbox(sh.pts)
+    step = max(step, math.sqrt(area(sh.pts)) / 34)
     pts = []
     yy, row = y0 + step / 2, 0
     while yy < y1:
@@ -774,9 +863,39 @@ def _dots(pts, seg):
     return "".join(d)
 
 
+def _screen(o, sh, combo, step=5.0):
+    """A big light area as a riso halftone: the paper, then rows of dots (tiny squares) of its main
+    ink; two rows (even, odd) are drawn once and repeated with <use>, all clipped to the shape."""
+    ink = max(combo, key=combo.get) if combo else "B"
+    dens = combo.get(ink, .2)
+    x0, y0, x1, y1 = bbox(sh.pts)
+    side = .8 + 3.0 * dens
+    k = o.id("k")
+    o.defs.append(f'<clipPath id="{k}">{_geom(sh)}/></clipPath>')
+    rows = []
+    for j in (0, 1):
+        r = o.id("r")
+        sq = f"h{n(side)}v{n(side)}h-{n(side)}z"
+        xs = [x0 + step * i + (step / 2 if j else 0) for i in range(int((x1 - x0) / step) + 2)]
+        d = f"M{n(xs[0])},{n(y0)}{sq}" + "".join(f"m{n(step)},0{sq}" for _ in xs[1:])
+        o.defs.append(f'<path id="{r}" d="{d}"/>')
+        rows.append(r)
+    o.body.append(f'{_geom(sh)} fill="{PAPER_B}"/>')
+    uses = []
+    j, yy = 0, 0.0
+    while y0 + yy <= y1 + step:
+        uses.append(f'<use href="#{rows[j % 2]}" y="{n(yy)}" fill="{INKS[ink]}"/>')
+        yy += step * .87
+        j += 1
+    o.body.append(f'<g clip-path="url(#{k})">{"".join(uses)}</g>')
+
+
 def _render_b(o, shapes, grain=True):
     specks = []
     for sh in shapes:
+        if sh.tag == "screen":
+            _screen(o, sh, riso_of(sh)[0])
+            continue
         if sh.tag == "shadow":
             _halftone(o, sh, "B", .55 * sh.op)
             continue
@@ -784,11 +903,11 @@ def _render_b(o, shapes, grain=True):
             combo, mc = riso_snap(sh.col)
             o.body.append(f'{_geom(sh)} fill="{mc}"{_op(.45 * sh.op, "fill-opacity")}/>')
             continue
-        combo, mc = riso_snap(sh.col)
+        combo, mc = riso_of(sh)
         if not sh.closed:
             a = _anchor(combo)
             dx, dy = INK_OFF.get(a, (0, 0)) if len(combo) == 1 else (0, 0)
-            o.body.append(_stroke(pd([(x + dx, y + dy) for x, y in sh.pts], False), mc, sh.w, sh.op))
+            o.stroke(pd([(x + dx, y + dy) for x, y in sh.pts], False), mc, sh.w, sh.op)
             continue
         x0, y0, x1, y1 = bbox(sh.pts)
         size = min(x1 - x0, y1 - y0)
@@ -805,10 +924,11 @@ def _render_b(o, shapes, grain=True):
             for i, d in fringes:
                 o.body.append(f'{_geom(sh, *INK_OFF[i])} fill="{ink_tint(i, d)}"{_op(sh.op)}/>')
             o.body.append(f'{_geom(sh)} fill="{mc}"{_op(sh.op)}/>')
-        if grain and combo and size >= 2.5 and sh.op > .5:
+        cover = min(1.0, sum(combo.values()))      # light tints show little grain
+        if grain and cover > .25 and size >= 2.5 and sh.op > .5:
             a_ = area(sh.pts)
             rnd = random.Random(sh.key() ^ 0x5EED)
-            cnt = int(a_ / GRAIN_AREA + rnd.random())
+            cnt = int(a_ * cover / GRAIN_AREA + rnd.random())
             tries = 0
             while cnt > 0 and tries < cnt * 4 + 8:
                 tries += 1
@@ -853,44 +973,61 @@ def _render_c(o, shapes):
         rnd = random.Random(sh.key())
         col = crayon(sh.col)
         if not sh.closed:
-            wp = wobble(sh.pts, .7, rnd, False, 3)
-            o.body.append(_stroke(pd(wp, False), col, max(sh.w, 2.2), sh.op))
+            wp = wobble(sh.pts, .7, rnd, False, max(3, perimeter(sh.pts, False) / 60))
+            o.stroke(pd(wp, False), col, max(sh.w, 2.2), sh.op)
             continue
         x0, y0, x1, y1 = bbox(sh.pts)
         bw, bh = x1 - x0, y1 - y0
-        size = min(bw, bh)
-        white = _hls(col)[1] > .93
-        if size < 6.5 or white:
-            # small details and white parts: solid wax, a little wobbly
-            wp = wobble(sh.pts, min(.6, size * .06), rnd, True, 2.2) if size > 3 else sh.pts
-            o.body.append(f'<path d="{pd(wp)}" fill="{col}"{_op(sh.op)}/>')
+        size = thickness(sh.pts)
+        per = perimeter(sh.pts)
+        light = _hls(col)[1]
+        if size < 6.5 or light > .93 or light < .3:
+            # small details, white and very dark parts: solid wax, a little wobbly
+            if sh.ell is not None and size < 14:
+                o.body.append(f'{_geom(sh)} fill="{col}"{_op(sh.op)}/>')
+            elif len(sh.pts) <= 12:
+                jp = [(x + rnd.uniform(-.35, .35), y + rnd.uniform(-.35, .35)) for x, y in sh.pts]
+                o.body.append(f'<path d="{pd(jp)}" fill="{col}"{_op(sh.op)}/>')
+            else:
+                wp = wobble(sh.pts, min(.6, size * .06), rnd, True, max(2.2, per / 40))
+                o.body.append(f'<path d="{pd(wp)}" fill="{col}"{_op(sh.op)}/>')
         else:
             cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
             ov = 1.7
             big = tf(sh.pts, s=1 + 2 * ov / bh, sx=1 + 2 * ov / bw, about=(cx, cy))
             k = o.id("k")
-            o.defs.append(f'<clipPath id="{k}"><path d="{pd(big)}"/></clipPath>')
+            if sh.ell is not None:
+                ex, ey, rx, ry, rot = sh.ell
+                clip_el = _geom(sh.copy(ell=(ex, ey, rx + ov, ry + ov, rot)))
+            else:
+                clip_el = _geom(sh.copy(pts=big, ell=None))
+            o.defs.append(f'<clipPath id="{k}">{clip_el}/></clipPath>')
             ang = FACE_ANGLE.get(sh.face) if sh.face else rnd.choice([-1, 1]) * rnd.uniform(28, 62)
+            la, elong = long_axis(resample(sh.pts, max(1.0, per / 80)))
+            if elong > 1.8:              # long shapes: strokes run along them, as a child would colour
+                ang = la + rnd.uniform(-14, 14)
             ang = math.radians(ang + rnd.uniform(-6, 6))
             ca, sa = math.cos(ang), math.sin(ang)
             cs = [((px - cx) * ca + (py - cy) * sa, -(px - cx) * sa + (py - cy) * ca) for px, py in ((x0, y0), (x1, y0), (x0, y1), (x1, y1))]
             umin, umax = min(c[0] for c in cs) - 3, max(c[0] for c in cs) + 3
             vmin, vmax = min(c[1] for c in cs) - 2, max(c[1] for c in cs) + 2
+            grow = 1 + min(.45, size / 260)       # big areas: a fatter crayon, wider strokes
             pts, v, side = [], vmin, 0
-            while v <= vmax + HATCH:
+            while v <= vmax + HATCH * grow:
                 u = (umin if side == 0 else umax) + rnd.uniform(-2, 2)
                 pts.append((cx + u * ca - v * sa, cy + u * sa + v * ca))
-                v += HATCH * rnd.uniform(.8, 1.2)
+                v += HATCH * grow * rnd.uniform(.8, 1.2)
                 side ^= 1
             dash = f' stroke-dasharray="{WAX}" stroke-dashoffset="{rnd.randint(0, 40)}"' if size > 10 else ""
-            o.body.append(f'<g clip-path="url(#{k})"><path d="{pd(pts, False)}" fill="none" stroke="{col}" stroke-width="{n(HATCH_W)}" '
+            o.body.append(f'<g clip-path="url(#{k})"><path d="{pd(pts, False, True)}" fill="none" stroke="{col}" stroke-width="{n(HATCH_W * grow)}" '
                           f'stroke-linecap="round" stroke-linejoin="round"{_op(.9 * sh.op, "stroke-opacity")}{dash}/></g>')
-        if size < 4 or sh.tag == "detail":
+        if size < 4 or sh.tag in ("detail", "screen"):
             continue
-        oc = crayon_dark(col) if _hls(col)[1] > .22 else col
-        for j in range(2 if size > 14 else 1):
-            wp = wobble(sh.pts, .8 + .5 * j, rnd, True, 3)
-            o.body.append(_stroke(pd(wp, True), oc, (2.3 if size > 9 else 1.6) * (1 - .3 * j), (.95 - .3 * j) * sh.op))
+        oc = crayon_dark(col) if light > .22 else col
+        step = max(3.0, per / 64)
+        for j in range(2 if 14 < size < 120 else 1):
+            wp = wobble(sh.pts, .8 + .5 * j, rnd, True, step * (1 + .3 * j))
+            o.stroke(pd(wp, True, size > 9), oc, (2.3 if size > 9 else 1.6) * (1 - .3 * j), (.95 - .3 * j) * sh.op)
 
 
 # ---------------------------------------------------------------- render
@@ -901,6 +1038,7 @@ def render(shapes, style, box=None, paper=False, grain=True):
     if box is None:
         x0, y0, x1, y1 = shapes_bbox(shapes)
         box = (x0 - PAD, y0 - PAD, x1 - x0 + 2 * PAD, y1 - y0 + 2 * PAD)
+    shapes = [sh for sh in shapes if sh.only is None or style in sh.only]
     bx, by, bw, bh = box
     if bx or by:
         shapes = transform(shapes, dx=-bx, dy=-by)
@@ -1171,6 +1309,79 @@ def overlap_frac(a, b):
     return ix * iy / min(a["w"] * a["h"], b["w"] * b["h"])
 
 
+# ---------------------------------------------------------------- the app's puzzle picking (lib/core/puzzles.dart)
+GAP = .015                              # Puzzles.gap: room between two differences of one puzzle
+LEVELS = ("small", "mid", "big")        # 2-3, 3-4, 4-5 years
+NEED = {"small": 1, "mid": 3, "big": 5}  # differences a puzzle must always find (TwoRound: 3 at mid, 5 at big)
+
+
+def _from(c):
+    """Change.from in scenes.dart: the youngest level a change is used for (0 small, 1 mid, 2 big)."""
+    k = c["kind"]
+    if k in ("gone", "extra"):
+        return 0
+    if k in ("flip", "size"):
+        return 1
+    return {"color": 0, "swap": 1}.get(c.get("type"), 2)
+
+
+def _diff_box(t, c):
+    b = (t["x"], t["y"], t["w"], t["h"])
+    if c["kind"] != "size":
+        return b
+    s = c["scale"]
+    bottom = t["y"] + t["h"] / 2
+    l, r = min(t["x"] - t["w"] / 2, t["x"] - t["w"] * s / 2), max(t["x"] + t["w"] / 2, t["x"] + t["w"] * s / 2)
+    top = min(t["y"] - t["h"] / 2, bottom - t["h"] * s)
+    return ((l + r) / 2, (top + bottom) / 2, r - l, bottom - top)
+
+
+def _overlaps(a, b, gap=GAP):
+    return (a[0] - a[2] / 2 - gap < b[0] + b[2] / 2 and b[0] - b[2] / 2 - gap < a[0] + a[2] / 2 and
+            a[1] - a[3] / 2 - gap < b[1] + b[3] / 2 and b[1] - b[3] / 2 - gap < a[1] + a[3] / 2)
+
+
+def choices(data, level):
+    """Puzzles.choices: (thing id, box, kind) of every difference a level may use."""
+    li = LEVELS.index(level)
+    out = []
+    for t in data["objects"]:
+        if t["big"] or level == "big":
+            for c in t["changes"]:
+                if _from(c) <= li:
+                    out.append((t["id"], _diff_box(t, c), c["kind"] + "." + c.get("type", "")))
+    for e in data["extras"]:
+        if e.get("big") or level == "big":
+            out.append((e["id"], _diff_box(e, {"kind": "extra"}), "extra"))
+    return out
+
+
+def pick(data, level, n_, rnd):
+    """Puzzles.pick: n differences, one per thing, apart from each other, different kinds first."""
+    alls = choices(data, level)
+    rnd.shuffle(alls)
+    picked = []
+    for any_kind in (False, True):
+        for d in alls:
+            if len(picked) == n_:
+                return picked
+            if d in picked or any(p[0] == d[0] or _overlaps(p[1], d[1]) for p in picked):
+                continue
+            if not any_kind and any(p[2] == d[2] for p in picked):
+                continue
+            picked.append(d)
+    return picked
+
+
+def pick_stats(data, runs=4000):
+    """{level: fewest differences found in `runs` random puzzles}."""
+    out = {}
+    for level in LEVELS:
+        rnd = random.Random(7)
+        out[level] = min(len(pick(data, level, 5, rnd)) for _ in range(runs))
+    return out
+
+
 def check_scene(sid):
     """The contract (docs/scenes.md) for one scene: JSON fields, every art file in all three styles,
     viewBox aspects equal to the boxes, `big` things wide enough, enough big colour/gone changes,
@@ -1228,8 +1439,12 @@ def check_scene(sid):
                 if c.get("type") not in ART_TYPES:
                     fail(f"{o['id']}: art change type {c.get('type')}")
                 need_art(c["art"], asp)
-            if c["kind"] == "size" and not isinstance(c.get("scale"), (int, float)):
-                fail(f"{o['id']}: size change without scale")
+            if c["kind"] == "size":
+                if not isinstance(c.get("scale"), (int, float)) or c["scale"] <= 0:
+                    fail(f"{o['id']}: size change without scale")
+                bx = _diff_box(o, c)
+                if bx[0] - bx[2] / 2 < -1e-6 or bx[0] + bx[2] / 2 > 1 + 1e-6 or bx[1] - bx[3] / 2 < -1e-6:
+                    fail(f"{o['id']}: scaled by {c['scale']} it leaves the picture")
         if o["big"] and any(c["kind"] == "gone" or c.get("type") == "color" for c in o["changes"]):
             big_easy += 1
     if big_easy < 7:
@@ -1251,6 +1466,14 @@ def check_scene(sid):
         for st in STYLES:
             if not (ART / st / f"chameleon_hide_{h['tint']}.svg").exists():
                 fail(f"missing {st}/chameleon_hide_{h['tint']}.svg")
+    stats = pick_stats(data)
+    for level, k in NEED.items():
+        if stats[level] < k:
+            fail(f"a {level} puzzle can end up with only {stats[level]} differences (needs {k}): spread the boxes apart")
+    for h in data["hides"]:
+        hb = (h["x"], h["y"], h["w"], h["h"])
+        if not any(o["z"] > h["z"] and _overlaps(hb, (o["x"], o["y"], o["w"], o["h"]), 0) for o in data["objects"]):
+            fail(f"hide {h['tint']} at z {h['z']}: nothing is drawn in front of any part of it")
     if "lineup" in data:
         lu = data["lineup"]
         need_art(lu["art"], lu["w"] / lu["h"])
