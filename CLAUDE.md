@@ -26,7 +26,7 @@
 - 名稱：眼尖尖大挑戰。
 
 ## GitHub Actions
-- 工作流程（照想一想樂園，**還沒加**；第一次放上 main 前要先問）：
+- 工作流程（照想一想樂園，2026-11-06 加好；第一次放上 main 前要先問）：
   - `app.yml`（App）：推到 `main` 而且改到 `app/**` 時跑分析、全部測試（含完整流程）、打包 APK，約 15～20 分鐘。
   - `release.yml`（Release）：推到 `main` 而且改到 `app/pubspec.yaml`、`CHANGELOG.md` 或它自己時，版本還沒發布過就打包三個 APK 放上 Releases，約 20 分鐘；版本沒變約 1 分鐘。
   - `cleanup.yml`：手動，刪舊的建置檔案，約 1 分鐘。
@@ -54,8 +54,8 @@
 - 完整流程和截圖：`flutter test test/flow_test.dart`，截圖在 `app/build/screenshots/`。
 - 示範影片（每一版都要給使用者）：在 `app/` 裡 `flutter test test/demo/demo_video_test.dart --dart-define=DEMO=true`（約 5～10 分鐘，要 ffmpeg），再在專案根目錄 `python3 tools/demo_audio.py` 把背景音樂和音效混進去。輸出 `app/build/demo/demo.mp4`；`chapters.txt` 是每一段開始的格數（每秒 10 格），用來剪新功能的片段。
 
-## 程式在哪裡（開始寫程式後照這樣放）
+## 程式在哪裡
 - `app/assets/scenes/<場景>.json`：每個場景的東西（位置、大小、可以怎麼變），圖和程式共用。
 - `app/lib/core/`：場景資料、出題規則、存檔、聲音、語音。
 - `app/lib/features/`：首頁、四種玩法、相簿、休息、家長關卡和家長模式。
-- 圖：`design/art/`（Python：一份幾何、三種畫法）；聲音：`design/sounds/make_sounds.py`。
+- 圖：`design/art/`（Python：`kit.py` 一份幾何、三種畫法；`scene_<場景>.py`、`chameleon.py`、`icon.py`；`build.py` 產生和檢查，`fluttercheck` 用真的 flutter_svg 比對）；聲音：`design/sounds/make_sounds.py`。
