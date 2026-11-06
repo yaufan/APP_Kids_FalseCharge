@@ -86,12 +86,20 @@ class _OddGameState extends State<OddGame> {
   @override
   Widget build(BuildContext context) => LayoutBuilder(builder: (_, box) {
         final n = _r.count;
-        // 3 in a row; 4 as two and two; 5 as three and two.
-        final perRow = n == 4 ? 2 : 3;
-        final rows = (n / perRow).ceil();
         final aspect = _r.lineup.h / _r.lineup.w;
         const gap = 14.0;
-        final w = math.min((box.maxWidth - gap * (perRow + 1)) / perRow, (box.maxHeight - gap * (rows + 1)) / rows / aspect);
+        // As many in a row as makes them biggest (on a phone: two by two).
+        var perRow = 1;
+        var w = 0.0;
+        for (var p = 1; p <= n; p++) {
+          final rows = (n / p).ceil();
+          final size = math.min((box.maxWidth - gap * (p + 1)) / p, (box.maxHeight - gap * (rows + 1)) / rows / aspect);
+          if (size > w + 0.5) {
+            w = size;
+            perRow = p;
+          }
+        }
+        final rows = (n / perRow).ceil();
         return Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             for (var row = 0; row < rows; row++)

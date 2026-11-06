@@ -80,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: SafeArea(
           child: LayoutBuilder(builder: (context, box) {
             final wide = box.maxWidth > 600;
-            final pad = wide ? (box.maxWidth - 600) / 2 + 16 : 16.0;
+            final pad = box.maxWidth > 860 ? (box.maxWidth - 860) / 2 + 16 : 16.0;
             return Column(children: [
               Expanded(
                 child: ListView(padding: EdgeInsets.fromLTRB(pad, 8, pad, 12), children: [
