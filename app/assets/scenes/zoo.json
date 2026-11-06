@@ -1,0 +1,484 @@
+{
+ "id": "zoo",
+ "zh": "動物園",
+ "en": "zoo",
+ "objects": [
+  {
+   "id": "giraffe",
+   "zh": "長頸鹿",
+   "en": "giraffe",
+   "x": 0.49083,
+   "y": 0.2725,
+   "w": 0.17167,
+   "h": 0.30167,
+   "z": 68,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "giraffe_blue",
+     "said": "長頸鹿變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "長頸鹿不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "長頸鹿轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "elephant",
+   "zh": "大象",
+   "en": "elephant",
+   "x": 0.29667,
+   "y": 0.43417,
+   "w": 0.18333,
+   "h": 0.14833,
+   "z": 133,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "elephant_pink",
+     "said": "大象變成粉紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "大象不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "大象轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "zebra",
+   "zh": "斑馬",
+   "en": "zebra",
+   "x": 0.67833,
+   "y": 0.39083,
+   "w": 0.17,
+   "h": 0.205,
+   "z": 125,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "zebra_dots",
+     "said": "斑馬的條紋變成點點了！"
+    },
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "zebra_pony",
+     "said": "斑馬變成小馬了！"
+    },
+    {
+     "kind": "gone",
+     "said": "斑馬不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "斑馬轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "lion",
+   "zh": "獅子",
+   "en": "lion",
+   "x": 0.49667,
+   "y": 0.5225,
+   "w": 0.16,
+   "h": 0.15833,
+   "z": 213,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "lion_tiger",
+     "said": "獅子變成老虎了！"
+    },
+    {
+     "kind": "gone",
+     "said": "獅子不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.3,
+     "said": "獅子變大了！"
+    }
+   ]
+  },
+  {
+   "id": "panda",
+   "zh": "熊貓",
+   "en": "panda",
+   "x": 0.10583,
+   "y": 0.49917,
+   "w": 0.15167,
+   "h": 0.215,
+   "z": 213,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "panda_brown",
+     "said": "熊貓變成咖啡色了！"
+    },
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "panda_wow",
+     "said": "熊貓嚇了一跳！"
+    },
+    {
+     "kind": "gone",
+     "said": "熊貓不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "熊貓轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "hippo",
+   "zh": "河馬",
+   "en": "hippo",
+   "x": 0.67917,
+   "y": 0.565,
+   "w": 0.165,
+   "h": 0.10667,
+   "z": 233,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "hippo_pink",
+     "said": "河馬變成粉紅色了！"
+    },
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "hippo_open",
+     "said": "河馬張開大嘴巴了！"
+    },
+    {
+     "kind": "gone",
+     "said": "河馬不見了！"
+    }
+   ]
+  },
+  {
+   "id": "penguins",
+   "zh": "企鵝",
+   "en": "penguins",
+   "x": 0.84833,
+   "y": 0.50667,
+   "w": 0.13333,
+   "h": 0.09667,
+   "z": 200,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "penguins_two",
+     "said": "企鵝少了一隻！"
+    },
+    {
+     "kind": "gone",
+     "said": "企鵝不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "企鵝轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "flamingos",
+   "zh": "紅鶴",
+   "en": "flamingos",
+   "x": 0.32333,
+   "y": 0.605,
+   "w": 0.12667,
+   "h": 0.15667,
+   "z": 289,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "flamingos_blue",
+     "said": "紅鶴變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "紅鶴不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "紅鶴轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "train",
+   "zh": "小火車",
+   "en": "little train",
+   "x": 0.5,
+   "y": 0.70333,
+   "w": 0.16,
+   "h": 0.16333,
+   "z": 341,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "train_blue",
+     "said": "小火車變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小火車不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小火車轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "parrot",
+   "zh": "鸚鵡",
+   "en": "parrot",
+   "x": 0.86667,
+   "y": 0.1475,
+   "w": 0.18667,
+   "h": 0.16167,
+   "z": 3,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "parrot_blue",
+     "said": "鸚鵡變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "鸚鵡不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "鸚鵡轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "sun",
+   "zh": "太陽",
+   "en": "sun",
+   "x": 0.11667,
+   "y": 0.11,
+   "w": 0.15667,
+   "h": 0.15667,
+   "z": 1,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "sun_wink",
+     "said": "太陽眨眼睛了！"
+    },
+    {
+     "kind": "gone",
+     "said": "太陽不見了！"
+    }
+   ]
+  },
+  {
+   "id": "monkey",
+   "zh": "猴子",
+   "en": "monkey",
+   "x": 0.2575,
+   "y": 0.3,
+   "w": 0.095,
+   "h": 0.14333,
+   "z": 92,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "monkey_apple",
+     "said": "猴子的香蕉變成蘋果了！"
+    },
+    {
+     "kind": "gone",
+     "said": "猴子不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "猴子轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "turtle",
+   "zh": "烏龜",
+   "en": "turtle",
+   "x": 0.6525,
+   "y": 0.69333,
+   "w": 0.115,
+   "h": 0.08,
+   "z": 317,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "turtle_orange",
+     "said": "烏龜變成橘色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "烏龜不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "烏龜轉向另一邊了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.5,
+     "said": "烏龜變大了！"
+    }
+   ]
+  },
+  {
+   "id": "sign",
+   "zh": "牌子",
+   "en": "sign",
+   "x": 0.4,
+   "y": 0.695,
+   "w": 0.07667,
+   "h": 0.13,
+   "z": 346,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "sign_star",
+     "said": "牌子上的腳印變成星星了！"
+    },
+    {
+     "kind": "gone",
+     "said": "牌子不見了！"
+    }
+   ]
+  }
+ ],
+ "extras": [
+  {
+   "id": "butterfly",
+   "zh": "蝴蝶",
+   "en": "butterfly",
+   "x": 0.29917,
+   "y": 0.12167,
+   "w": 0.11833,
+   "h": 0.1,
+   "z": 900,
+   "big": true,
+   "said": "多了一隻蝴蝶！"
+  },
+  {
+   "id": "babyele",
+   "zh": "小象",
+   "en": "baby elephant",
+   "x": 0.40583,
+   "y": 0.4925,
+   "w": 0.10167,
+   "h": 0.085,
+   "z": 162,
+   "big": false,
+   "said": "多了一隻小象！"
+  },
+  {
+   "id": "bird",
+   "zh": "小鳥",
+   "en": "bird",
+   "x": 0.68667,
+   "y": 0.08417,
+   "w": 0.10333,
+   "h": 0.06167,
+   "z": 4,
+   "big": false,
+   "said": "多了一隻小鳥！"
+  }
+ ],
+ "hides": [
+  {
+   "x": 0.19,
+   "y": 0.5367,
+   "w": 0.0633,
+   "h": 0.0633,
+   "z": 212,
+   "tint": "leaf"
+  },
+  {
+   "x": 0.3483,
+   "y": 0.365,
+   "w": 0.0567,
+   "h": 0.0567,
+   "z": 132,
+   "tint": "wood"
+  },
+  {
+   "x": 0.56,
+   "y": 0.5133,
+   "w": 0.0633,
+   "h": 0.0633,
+   "z": 212,
+   "tint": "sand"
+  }
+ ],
+ "lineup": {
+  "art": "penguin",
+  "zh": "企鵝",
+  "w": 0.2,
+  "h": 0.2,
+  "odd": [
+   {
+    "kind": "art",
+    "type": "color",
+    "art": "penguin_blue",
+    "said": "這隻企鵝是藍色的！"
+   },
+   {
+    "kind": "art",
+    "art": "penguin_scarf",
+    "said": "這隻企鵝圍了圍巾！"
+   },
+   {
+    "kind": "flip",
+    "said": "這隻企鵝轉向另一邊！"
+   }
+  ]
+ }
+}

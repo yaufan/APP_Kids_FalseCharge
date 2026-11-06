@@ -1,0 +1,487 @@
+{
+ "id": "market",
+ "zh": "夜市",
+ "en": "night market",
+ "objects": [
+  {
+   "id": "lanterns",
+   "zh": "燈籠",
+   "en": "lanterns",
+   "x": 0.17333,
+   "y": 0.17,
+   "w": 0.24,
+   "h": 0.14667,
+   "z": 3,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "lanterns_blue",
+     "said": "燈籠變藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "lanterns_two",
+     "said": "燈籠少了一個！"
+    },
+    {
+     "kind": "gone",
+     "said": "燈籠不見了！"
+    }
+   ]
+  },
+  {
+   "id": "moon",
+   "zh": "月亮",
+   "en": "moon",
+   "x": 0.92667,
+   "y": 0.09333,
+   "w": 0.13667,
+   "h": 0.13667,
+   "z": 1,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "moon_sleep",
+     "said": "月亮睡著了！"
+    },
+    {
+     "kind": "gone",
+     "said": "月亮不見了！"
+    }
+   ]
+  },
+  {
+   "id": "stall_grill",
+   "zh": "烤肉攤",
+   "en": "grill stall",
+   "x": 0.41167,
+   "y": 0.30833,
+   "w": 0.15667,
+   "h": 0.25667,
+   "z": 93,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "stall_grill_blue",
+     "said": "烤肉攤變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "stall_grill_dots",
+     "said": "烤肉攤的棚子變成點點了！"
+    },
+    {
+     "kind": "gone",
+     "said": "烤肉攤不見了！"
+    }
+   ]
+  },
+  {
+   "id": "skewers",
+   "zh": "烤肉串",
+   "en": "skewers",
+   "x": 0.4225,
+   "y": 0.30917,
+   "w": 0.065,
+   "h": 0.07833,
+   "z": 95,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "skewers_three",
+     "said": "烤肉串少了一串！"
+    },
+    {
+     "kind": "gone",
+     "said": "烤肉串不見了！"
+    }
+   ]
+  },
+  {
+   "id": "stall_tea",
+   "zh": "飲料攤",
+   "en": "drink stall",
+   "x": 0.58833,
+   "y": 0.2725,
+   "w": 0.15667,
+   "h": 0.32833,
+   "z": 93,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "stall_tea_pink",
+     "said": "飲料攤變成粉紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "飲料攤不見了！"
+    }
+   ]
+  },
+  {
+   "id": "tea",
+   "zh": "珍珠奶茶",
+   "en": "bubble tea",
+   "x": 0.56583,
+   "y": 0.3075,
+   "w": 0.04167,
+   "h": 0.07833,
+   "z": 95,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "tea_pink",
+     "said": "珍珠奶茶變成粉紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "珍珠奶茶不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.5,
+     "said": "珍珠奶茶變大了！"
+    }
+   ]
+  },
+  {
+   "id": "stall_cotton",
+   "zh": "棉花糖攤",
+   "en": "cotton-candy stall",
+   "x": 0.23833,
+   "y": 0.40833,
+   "w": 0.15667,
+   "h": 0.25667,
+   "z": 173,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "stall_cotton_purple",
+     "said": "棉花糖攤變成紫色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "棉花糖攤不見了！"
+    }
+   ]
+  },
+  {
+   "id": "cotton",
+   "zh": "棉花糖",
+   "en": "cotton candy",
+   "x": 0.26667,
+   "y": 0.405,
+   "w": 0.05,
+   "h": 0.09,
+   "z": 175,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "cotton_blue",
+     "said": "棉花糖變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "棉花糖不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.5,
+     "said": "棉花糖變大了！"
+    }
+   ]
+  },
+  {
+   "id": "stall_balloon",
+   "zh": "氣球攤",
+   "en": "balloon stall",
+   "x": 0.76167,
+   "y": 0.33667,
+   "w": 0.15667,
+   "h": 0.4,
+   "z": 173,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "stall_balloon_orange",
+     "said": "氣球攤變成橘色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "stall_balloon_four",
+     "said": "氣球少了一顆！"
+    },
+    {
+     "kind": "gone",
+     "said": "氣球攤不見了！"
+    }
+   ]
+  },
+  {
+   "id": "sign",
+   "zh": "招牌",
+   "en": "sign",
+   "x": 0.5,
+   "y": 0.525,
+   "w": 0.13667,
+   "h": 0.14333,
+   "z": 218,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "sign_green",
+     "said": "招牌變成綠色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "sign_heart",
+     "said": "招牌上的星星變成愛心了！"
+    },
+    {
+     "kind": "gone",
+     "said": "招牌不見了！"
+    }
+   ]
+  },
+  {
+   "id": "tub",
+   "zh": "金魚池",
+   "en": "goldfish tub",
+   "x": 0.49,
+   "y": 0.73333,
+   "w": 0.16333,
+   "h": 0.12,
+   "z": 344,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "tub_red",
+     "said": "金魚池變成紅色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "tub_two",
+     "said": "金魚少了一隻！"
+    },
+    {
+     "kind": "gone",
+     "said": "金魚池不見了！"
+    }
+   ]
+  },
+  {
+   "id": "scooter",
+   "zh": "機車",
+   "en": "scooter",
+   "x": 0.67083,
+   "y": 0.62417,
+   "w": 0.15833,
+   "h": 0.14167,
+   "z": 296,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "scooter_blue",
+     "said": "機車變成藍色了！"
+    },
+    {
+     "kind": "flip",
+     "said": "機車轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "機車不見了！"
+    }
+   ]
+  },
+  {
+   "id": "cat",
+   "zh": "小貓",
+   "en": "cat",
+   "x": 0.29917,
+   "y": 0.6075,
+   "w": 0.16833,
+   "h": 0.13833,
+   "z": 282,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "cat_dog",
+     "said": "小貓變成小狗了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小貓轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小貓不見了！"
+    }
+   ]
+  },
+  {
+   "id": "stool",
+   "zh": "椅子",
+   "en": "stool",
+   "x": 0.75333,
+   "y": 0.5825,
+   "w": 0.06333,
+   "h": 0.07833,
+   "z": 232,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "stool_blue",
+     "said": "椅子變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "椅子不見了！"
+    }
+   ]
+  },
+  {
+   "id": "bin",
+   "zh": "垃圾桶",
+   "en": "rubbish bin",
+   "x": 0.14333,
+   "y": 0.54833,
+   "w": 0.06667,
+   "h": 0.1,
+   "z": 213,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "bin_orange",
+     "said": "垃圾桶變成橘色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "垃圾桶不見了！"
+    }
+   ]
+  }
+ ],
+ "extras": [
+  {
+   "id": "balloon2",
+   "zh": "氣球",
+   "en": "balloon",
+   "x": 0.37667,
+   "y": 0.08083,
+   "w": 0.08,
+   "h": 0.155,
+   "z": 2,
+   "big": true,
+   "said": "多了一顆氣球！"
+  },
+  {
+   "id": "firework",
+   "zh": "煙火",
+   "en": "firework",
+   "x": 0.13,
+   "y": 0.83333,
+   "w": 0.16333,
+   "h": 0.16333,
+   "z": 4,
+   "big": true,
+   "said": "多了一朵煙火！"
+  },
+  {
+   "id": "firefly",
+   "zh": "螢火蟲",
+   "en": "firefly",
+   "x": 0.09167,
+   "y": 0.43667,
+   "w": 0.08,
+   "h": 0.07,
+   "z": 900,
+   "big": false,
+   "said": "多了一隻螢火蟲！"
+  }
+ ],
+ "hides": [
+  {
+   "x": 0.2117,
+   "y": 0.14,
+   "w": 0.0667,
+   "h": 0.0667,
+   "z": 2,
+   "tint": "red"
+  },
+  {
+   "x": 0.5817,
+   "y": 0.3233,
+   "w": 0.06,
+   "h": 0.06,
+   "z": 94,
+   "tint": "wood"
+  },
+  {
+   "x": 0.79,
+   "y": 0.5733,
+   "w": 0.0633,
+   "h": 0.0633,
+   "z": 231,
+   "tint": "sand"
+  }
+ ],
+ "lineup": {
+  "art": "cup",
+  "zh": "珍珠奶茶",
+  "w": 0.2,
+  "h": 0.2,
+  "odd": [
+   {
+    "kind": "art",
+    "type": "color",
+    "art": "cup_pink",
+    "said": "這杯是粉紅色的！"
+   },
+   {
+    "kind": "art",
+    "art": "cup_two",
+    "said": "這杯多了一根吸管！"
+   },
+   {
+    "kind": "flip",
+    "said": "這杯的吸管歪向另一邊！"
+   }
+  ]
+ }
+}

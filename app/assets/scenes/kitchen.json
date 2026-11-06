@@ -1,0 +1,498 @@
+{
+ "id": "kitchen",
+ "zh": "廚房",
+ "en": "kitchen",
+ "objects": [
+  {
+   "id": "fridge",
+   "zh": "冰箱",
+   "en": "fridge",
+   "x": 0.84167,
+   "y": 0.47833,
+   "w": 0.17667,
+   "h": 0.33667,
+   "z": 200,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "fridge_pink",
+     "said": "冰箱變成粉紅色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "fridge_magnets",
+     "said": "冰箱上的磁鐵變少了！"
+    },
+    {
+     "kind": "gone",
+     "said": "冰箱不見了！"
+    }
+   ]
+  },
+  {
+   "id": "window",
+   "zh": "窗戶",
+   "en": "window",
+   "x": 0.59333,
+   "y": 0.175,
+   "w": 0.15,
+   "h": 0.21,
+   "z": 10,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "window_green",
+     "said": "窗簾變成綠色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "window_dots",
+     "said": "窗簾變成點點了！"
+    },
+    {
+     "kind": "gone",
+     "said": "窗戶不見了！"
+    }
+   ]
+  },
+  {
+   "id": "pot",
+   "zh": "鍋子",
+   "en": "pot",
+   "x": 0.65333,
+   "y": 0.35917,
+   "w": 0.12667,
+   "h": 0.115,
+   "z": 101,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "pot_red",
+     "said": "鍋子變紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "鍋子不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.3,
+     "said": "鍋子變大了！"
+    }
+   ]
+  },
+  {
+   "id": "kettle",
+   "zh": "水壺",
+   "en": "kettle",
+   "x": 0.705,
+   "y": 0.37417,
+   "w": 0.09,
+   "h": 0.06833,
+   "z": 114,
+   "big": false,
+   "changes": [
+    {
+     "kind": "flip",
+     "said": "水壺轉向另一邊了！"
+    },
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "kettle_blue",
+     "said": "水壺變成藍色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "水壺不見了！"
+    }
+   ]
+  },
+  {
+   "id": "ricecooker",
+   "zh": "電鍋",
+   "en": "rice cooker",
+   "x": 0.36,
+   "y": 0.355,
+   "w": 0.13,
+   "h": 0.12667,
+   "z": 95,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "ricecooker_green",
+     "said": "電鍋變成綠色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "電鍋不見了！"
+    }
+   ]
+  },
+  {
+   "id": "clock",
+   "zh": "時鐘",
+   "en": "clock",
+   "x": 0.43583,
+   "y": 0.15667,
+   "w": 0.125,
+   "h": 0.15667,
+   "z": 12,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "clock_wow",
+     "said": "時鐘嚇了一跳！"
+    },
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "clock_purple",
+     "said": "時鐘變成紫色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "時鐘不見了！"
+    }
+   ]
+  },
+  {
+   "id": "mugs",
+   "zh": "杯子",
+   "en": "mugs",
+   "x": 0.16417,
+   "y": 0.34417,
+   "w": 0.135,
+   "h": 0.09833,
+   "z": 14,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "mugs_red",
+     "said": "杯子變成紅色了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "mugs_two",
+     "said": "杯子少了一個！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "mugs_dots",
+     "said": "杯子變成點點了！"
+    }
+   ]
+  },
+  {
+   "id": "board",
+   "zh": "紅蘿蔔",
+   "en": "carrots",
+   "x": 0.26167,
+   "y": 0.43583,
+   "w": 0.12,
+   "h": 0.07833,
+   "z": 140,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "board_two",
+     "said": "紅蘿蔔少了一根！"
+    },
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "board_cucumber",
+     "said": "紅蘿蔔變成小黃瓜了！"
+    }
+   ]
+  },
+  {
+   "id": "apron",
+   "zh": "圍裙",
+   "en": "apron",
+   "x": 0.78083,
+   "y": 0.2875,
+   "w": 0.08833,
+   "h": 0.135,
+   "z": 16,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "apron_dots",
+     "said": "圍裙變成點點了！"
+    },
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "apron_green",
+     "said": "圍裙變成綠色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "圍裙不見了！"
+    }
+   ]
+  },
+  {
+   "id": "broom",
+   "zh": "掃把",
+   "en": "broom",
+   "x": 0.11417,
+   "y": 0.51333,
+   "w": 0.05833,
+   "h": 0.2,
+   "z": 197,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "broom_red",
+     "said": "掃把變成紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "掃把不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "掃把倒向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "table",
+   "zh": "桌子",
+   "en": "table",
+   "x": 0.49083,
+   "y": 0.63333,
+   "w": 0.185,
+   "h": 0.18,
+   "z": 236,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "table_blue",
+     "said": "桌子變成藍色了！"
+    }
+   ]
+  },
+  {
+   "id": "fruit",
+   "zh": "蘋果",
+   "en": "apples",
+   "x": 0.49083,
+   "y": 0.56417,
+   "w": 0.06833,
+   "h": 0.065,
+   "z": 256,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "fruit_two",
+     "said": "蘋果少了一顆！"
+    },
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "fruit_orange",
+     "said": "蘋果變成橘子了！"
+    }
+   ]
+  },
+  {
+   "id": "cat",
+   "zh": "小貓",
+   "en": "cat",
+   "x": 0.73583,
+   "y": 0.59083,
+   "w": 0.155,
+   "h": 0.18167,
+   "z": 246,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "cat_dog",
+     "said": "小貓變成小狗了！"
+    },
+    {
+     "kind": "flip",
+     "said": "小貓轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小貓不見了！"
+    }
+   ]
+  },
+  {
+   "id": "stool",
+   "zh": "小板凳",
+   "en": "stool",
+   "x": 0.50833,
+   "y": 0.46083,
+   "w": 0.12333,
+   "h": 0.12167,
+   "z": 104,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "stool_yellow",
+     "said": "小板凳變成黃色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小板凳不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.3,
+     "said": "小板凳變大了！"
+    }
+   ]
+  },
+  {
+   "id": "plant",
+   "zh": "盆栽",
+   "en": "potted plant",
+   "x": 0.19583,
+   "y": 0.54583,
+   "w": 0.165,
+   "h": 0.215,
+   "z": 220,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "plant_purple",
+     "said": "花盆變成紫色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "盆栽不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.25,
+     "said": "盆栽變大了！"
+    }
+   ]
+  }
+ ],
+ "extras": [
+  {
+   "id": "mouse",
+   "zh": "小老鼠",
+   "en": "mouse",
+   "x": 0.32333,
+   "y": 0.7275,
+   "w": 0.10333,
+   "h": 0.06167,
+   "z": 314,
+   "big": false,
+   "said": "多了一隻小老鼠！"
+  },
+  {
+   "id": "balloon",
+   "zh": "氣球",
+   "en": "balloon",
+   "x": 0.85333,
+   "y": 0.15083,
+   "w": 0.12333,
+   "h": 0.27167,
+   "z": 3,
+   "big": true,
+   "said": "多了一個氣球！"
+  },
+  {
+   "id": "milk",
+   "zh": "牛奶",
+   "en": "milk",
+   "x": 0.50833,
+   "y": 0.60083,
+   "w": 0.04,
+   "h": 0.06167,
+   "z": 257,
+   "big": false,
+   "said": "桌上多了一杯牛奶！"
+  }
+ ],
+ "hides": [
+  {
+   "x": 0.1967,
+   "y": 0.51,
+   "w": 0.0767,
+   "h": 0.0767,
+   "z": 219,
+   "tint": "leaf"
+  },
+  {
+   "x": 0.8067,
+   "y": 0.5933,
+   "w": 0.0733,
+   "h": 0.0733,
+   "z": 245,
+   "tint": "white"
+  },
+  {
+   "x": 0.535,
+   "y": 0.4033,
+   "w": 0.0733,
+   "h": 0.0733,
+   "z": 103,
+   "tint": "wood"
+  }
+ ],
+ "lineup": {
+  "art": "mug",
+  "zh": "杯子",
+  "w": 0.2,
+  "h": 0.2,
+  "odd": [
+   {
+    "kind": "art",
+    "type": "color",
+    "art": "mug_blue",
+    "said": "這個杯子是藍色的！"
+   },
+   {
+    "kind": "art",
+    "art": "mug_spoon",
+    "said": "這個杯子裡有湯匙！"
+   },
+   {
+    "kind": "flip",
+    "said": "這個杯子的把手在另一邊！"
+   }
+  ]
+ }
+}

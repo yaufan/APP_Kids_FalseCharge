@@ -1,0 +1,483 @@
+{
+ "id": "beach",
+ "zh": "海邊",
+ "en": "beach",
+ "objects": [
+  {
+   "id": "palm",
+   "zh": "椰子樹",
+   "en": "palm tree",
+   "x": 0.13833,
+   "y": 0.39583,
+   "w": 0.22,
+   "h": 0.295,
+   "z": 162,
+   "big": true,
+   "changes": [
+    {
+     "kind": "gone",
+     "said": "椰子樹不見了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "palm_one",
+     "said": "椰子變少了！"
+    },
+    {
+     "kind": "flip",
+     "said": "椰子樹彎向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "chair",
+   "zh": "救生員椅",
+   "en": "lifeguard chair",
+   "x": 0.38333,
+   "y": 0.33083,
+   "w": 0.16,
+   "h": 0.27167,
+   "z": 62,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "chair_green",
+     "said": "救生員椅變成綠色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "救生員椅不見了！"
+    }
+   ]
+  },
+  {
+   "id": "umbrella",
+   "zh": "海灘傘",
+   "en": "beach umbrella",
+   "x": 0.58417,
+   "y": 0.32083,
+   "w": 0.20833,
+   "h": 0.29833,
+   "z": 78,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "umbrella_blue",
+     "said": "海灘傘變成藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "umbrella_dots",
+     "said": "海灘傘變成點點了！"
+    },
+    {
+     "kind": "gone",
+     "said": "海灘傘不見了！"
+    }
+   ]
+  },
+  {
+   "id": "towel",
+   "zh": "毛巾",
+   "en": "beach towel",
+   "x": 0.52667,
+   "y": 0.465,
+   "w": 0.16333,
+   "h": 0.1,
+   "z": 90,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "towel_pink",
+     "said": "毛巾變成粉紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "毛巾不見了！"
+    }
+   ]
+  },
+  {
+   "id": "surfboard",
+   "zh": "衝浪板",
+   "en": "surfboard",
+   "x": 0.10917,
+   "y": 0.4775,
+   "w": 0.07833,
+   "h": 0.205,
+   "z": 194,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "surfboard_orange",
+     "said": "衝浪板變成橘色了！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "surfboard_flowers",
+     "said": "衝浪板變成花花的了！"
+    },
+    {
+     "kind": "gone",
+     "said": "衝浪板不見了！"
+    }
+   ]
+  },
+  {
+   "id": "castle",
+   "zh": "沙堡",
+   "en": "sand castle",
+   "x": 0.34833,
+   "y": 0.54333,
+   "w": 0.16,
+   "h": 0.20333,
+   "z": 194,
+   "big": true,
+   "changes": [
+    {
+     "kind": "gone",
+     "said": "沙堡不見了！"
+    },
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "castle_two",
+     "said": "沙堡少了一座塔！"
+    },
+    {
+     "kind": "art",
+     "type": "pattern",
+     "art": "castle_star",
+     "said": "沙堡的旗子多了一顆星星！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.3,
+     "said": "沙堡變大了！"
+    }
+   ]
+  },
+  {
+   "id": "bucket",
+   "zh": "小水桶",
+   "en": "bucket and spade",
+   "x": 0.21417,
+   "y": 0.55833,
+   "w": 0.07833,
+   "h": 0.10667,
+   "z": 212,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "bucket_red",
+     "said": "小水桶變成紅色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "小水桶不見了！"
+    }
+   ]
+  },
+  {
+   "id": "ball",
+   "zh": "海灘球",
+   "en": "beach ball",
+   "x": 0.535,
+   "y": 0.49,
+   "w": 0.06,
+   "h": 0.07667,
+   "z": 156,
+   "big": false,
+   "changes": [
+    {
+     "kind": "size",
+     "scale": 1.6,
+     "said": "海灘球變大了！"
+    },
+    {
+     "kind": "gone",
+     "said": "海灘球不見了！"
+    }
+   ]
+  },
+  {
+   "id": "crab",
+   "zh": "螃蟹",
+   "en": "crab",
+   "x": 0.38833,
+   "y": 0.66667,
+   "w": 0.16,
+   "h": 0.15,
+   "z": 320,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "crab_blue",
+     "said": "螃蟹變藍色了！"
+    },
+    {
+     "kind": "art",
+     "type": "swap",
+     "art": "crab_turtle",
+     "said": "螃蟹變成小烏龜了！"
+    },
+    {
+     "kind": "flip",
+     "said": "螃蟹轉向另一邊了！"
+    }
+   ]
+  },
+  {
+   "id": "starfish",
+   "zh": "海星",
+   "en": "starfish",
+   "x": 0.50167,
+   "y": 0.5575,
+   "w": 0.08333,
+   "h": 0.05833,
+   "z": 200,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "starfish_purple",
+     "said": "海星變成紫色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "海星不見了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.5,
+     "said": "海星變大了！"
+    }
+   ]
+  },
+  {
+   "id": "shells",
+   "zh": "貝殼",
+   "en": "shells",
+   "x": 0.2675,
+   "y": 0.6475,
+   "w": 0.155,
+   "h": 0.065,
+   "z": 276,
+   "big": false,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "count",
+     "art": "shells_two",
+     "said": "貝殼少了一個！"
+    },
+    {
+     "kind": "gone",
+     "said": "貝殼不見了！"
+    }
+   ]
+  },
+  {
+   "id": "boat",
+   "zh": "帆船",
+   "en": "sailboat",
+   "x": 0.7975,
+   "y": 0.46917,
+   "w": 0.19833,
+   "h": 0.22167,
+   "z": 206,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "boat_red",
+     "said": "帆船的帆變成紅色了！"
+    },
+    {
+     "kind": "flip",
+     "said": "帆船轉向另一邊了！"
+    },
+    {
+     "kind": "gone",
+     "said": "帆船不見了！"
+    }
+   ]
+  },
+  {
+   "id": "swimring",
+   "zh": "救生圈",
+   "en": "swim ring",
+   "x": 0.565,
+   "y": 0.67583,
+   "w": 0.15333,
+   "h": 0.095,
+   "z": 290,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "color",
+     "art": "swimring_yellow",
+     "said": "救生圈變成黃色了！"
+    },
+    {
+     "kind": "gone",
+     "said": "救生圈不見了！"
+    }
+   ]
+  },
+  {
+   "id": "sun",
+   "zh": "太陽",
+   "en": "sun",
+   "x": 0.87,
+   "y": 0.12667,
+   "w": 0.16333,
+   "h": 0.15333,
+   "z": 1,
+   "big": true,
+   "changes": [
+    {
+     "kind": "art",
+     "type": "face",
+     "art": "sun_glasses",
+     "said": "太陽戴上太陽眼鏡了！"
+    },
+    {
+     "kind": "gone",
+     "said": "太陽不見了！"
+    }
+   ]
+  },
+  {
+   "id": "seagull",
+   "zh": "海鷗",
+   "en": "seagull",
+   "x": 0.29833,
+   "y": 0.10917,
+   "w": 0.18,
+   "h": 0.09833,
+   "z": 2,
+   "big": true,
+   "changes": [
+    {
+     "kind": "gone",
+     "said": "海鷗不見了！"
+    },
+    {
+     "kind": "flip",
+     "said": "海鷗轉向另一邊了！"
+    },
+    {
+     "kind": "size",
+     "scale": 1.4,
+     "said": "海鷗變大了！"
+    }
+   ]
+  }
+ ],
+ "extras": [
+  {
+   "id": "dolphin",
+   "zh": "海豚",
+   "en": "dolphin",
+   "x": 0.71167,
+   "y": 0.62333,
+   "w": 0.16,
+   "h": 0.12,
+   "z": 284,
+   "big": true,
+   "said": "多了一隻海豚！"
+  },
+  {
+   "id": "fish",
+   "zh": "小魚",
+   "en": "fish",
+   "x": 0.54917,
+   "y": 0.74,
+   "w": 0.06833,
+   "h": 0.07,
+   "z": 360,
+   "big": false,
+   "said": "多了一條小魚！"
+  },
+  {
+   "id": "ball2",
+   "zh": "海灘球",
+   "en": "beach ball",
+   "x": 0.63917,
+   "y": 0.52583,
+   "w": 0.085,
+   "h": 0.06167,
+   "z": 184,
+   "big": false,
+   "said": "多了一顆海灘球！"
+  }
+ ],
+ "hides": [
+  {
+   "x": 0.3133,
+   "y": 0.5233,
+   "w": 0.0733,
+   "h": 0.0733,
+   "z": 193,
+   "tint": "sand"
+  },
+  {
+   "x": 0.6967,
+   "y": 0.52,
+   "w": 0.07,
+   "h": 0.07,
+   "z": 205,
+   "tint": "blue"
+  },
+  {
+   "x": 0.5267,
+   "y": 0.4533,
+   "w": 0.0667,
+   "h": 0.0667,
+   "z": 155,
+   "tint": "white"
+  }
+ ],
+ "lineup": {
+  "art": "crab_line",
+  "zh": "螃蟹",
+  "w": 0.2,
+  "h": 0.2,
+  "odd": [
+   {
+    "kind": "art",
+    "type": "color",
+    "art": "crab_line_blue",
+    "said": "這隻螃蟹是藍色的！"
+   },
+   {
+    "kind": "art",
+    "art": "crab_line_hat",
+    "said": "這隻螃蟹戴了帽子！"
+   },
+   {
+    "kind": "flip",
+    "said": "這隻螃蟹轉向另一邊！"
+   }
+  ]
+ }
+}
