@@ -82,9 +82,9 @@ GROUND = {
     "starfish": (100, 100),
     "boat": (172, 34),
     "swimring": (160, 130),
-    "dolphin": (192, 92),
+    "dolphin": (190, 100),
     "fish": (190, 170),
-    "ball2": (124, 60),
+    "ball2": (114, 70),
 }
 SKY_AT = {
     "sun": (522, 76),
@@ -199,15 +199,12 @@ def background():
         g.add(line([P(shore_x(y) + 14 + 1.5 * math.sin(y / 5), y) for y in ys], WHITE, 2.4, op=.85), -4870)
     for x, y in WAVES:
         g.add(line(wave(x, y), WHITE, 2, op=.8), -4860)
-    # the sand: ripples, little pebbles, footprints from the front edge to the towel, dune grass
+    # the sand: ripples, little pebbles, dune grass
     for pts in RIPPLES:
         g.add(line([P(x, y) for x, y in crs(pts, 5, closed=False)], SAND_LINE, 1.8), -4800)
     for x, y in PEBBLES:
         sx, sy = P(x, y)
         g.add(oval(sx, sy, 2.2, 1.3, col=mix(SAND, "#B98A4C", .45), tag="detail"), -4790)
-    for i, (x, y) in enumerate(FOOTPRINTS):
-        sx, sy = P(x, y)
-        g.add(oval(sx, sy, 3.6, 2.1, col=SAND_LINE, rot=-20, tag="detail"), -4780)
     for x, y in GRASS:
         sx, sy = P(x, y)
         g.add(line([(sx - 6, sy - 9), (sx - 2, sy), (sx - 1, sy - 13), (sx + 1, sy), (sx + 5, sy - 10)], "#6DBE5A", 2), x + y)
@@ -220,7 +217,6 @@ WAVES = [(150, 8), (176, 30), (188, 6), (140, 64), (172, 66), (194, 44), (158, 1
 RIPPLES = [[(10, 92), (16, 102), (14, 116)], [(70, 150), (78, 160), (76, 174)], [(30, 6), (38, 14), (40, 26)],
            [(86, 60), (90, 70), (88, 82)], [(18, 190), (26, 196)]]
 PEBBLES = [(30, 80), (54, 98), (24, 136), (88, 140), (40, 188), (70, 20), (6, 40), (84, 196), (120, 186)]
-FOOTPRINTS = [(78, 197), (72, 190), (74, 180), (68, 172), (70, 162), (64, 154), (66, 144), (60, 136), (62, 126)]
 GRASS = [(4, 30), (4, 44), (3, 96), (6, 132), (4, 186), (26, 3), (48, 4)]
 
 
@@ -230,8 +226,9 @@ def frond(T, ang, L, W, droop, col):
     a = math.radians(ang)
     ux, uy = math.cos(a), math.sin(a)
     tip = (T[0] + L * ux, T[1] + L * uy + droop)
-    mid = (T[0] + L * .5 * ux, T[1] + L * .5 * uy - 9 + droop * .1)
-    c = crs([T, mid, tip], 8, closed=False)
+    p1 = (T[0] + L * .35 * ux, T[1] + L * .35 * uy - 9)
+    p2 = (T[0] + L * .72 * ux, T[1] + L * .72 * uy - 6 + droop * .35)
+    c = crs([T, p1, p2, tip], 6, closed=False)
     m = len(c)
     left, right = [], []
     for i, (x, y) in enumerate(c):
@@ -266,15 +263,15 @@ def palm(nuts=3):
     g.add(transform(o, dx=sx, dy=sy), 0)
     T = (sx - 38, sy - 116)
     back = Group()
-    for ang, L, droop in ((-155, 58, 22), (-118, 46, 12), (-62, 46, 12), (-25, 58, 22)):
-        back.add(frond(T, ang, L, 12, droop, FROND_D))
+    for ang, L, droop in ((-150, 58, 30), (-95, 40, 16), (-30, 58, 30)):
+        back.add(frond(T, ang, L, 8.5, droop, FROND_D))
     g.add(back.shapes(), 1)
-    nut_at = ((-7, 7), (6, 8), (-1, 14))[:nuts]
-    g.add([oval(T[0] + dx, T[1] + dy, 7.4, col=COCO, cel=.8) for dx, dy in nut_at], 2)
     front = Group()
-    for ang, L, droop in ((-180, 62, 34), (152, 48, 22), (-92, 40, 8), (28, 48, 22), (0, 62, 34)):
-        front.add(frond(T, ang, L, 13, droop, FROND))
-    g.add(front.shapes(), 3)
+    for ang, L, droop in ((-125, 50, 28), (-55, 50, 28), (175, 66, 40), (5, 66, 40), (138, 54, 30), (42, 54, 30)):
+        front.add(frond(T, ang, L, 9, droop, FROND))
+    g.add(front.shapes(), 2)
+    nut_at = ((-7, 7), (6, 8), (-1, 14))[:nuts]
+    g.add([oval(T[0] + dx, T[1] + dy, 7.4, col=COCO, cel=.8) for dx, dy in nut_at], 3)
     return g.shapes()
 
 
@@ -341,9 +338,9 @@ def umbrella(c1=RED, c2=WHITE, dots=False):
     g = Group()
     g.add(shadow(x + 2, y + 6, 26, .5), -2)
     g.add(shadow(x, y, 3.5, .9), -1)
-    top = (sx + 8, sy - 98)
-    g.add([line([(sx, sy), top], "#D9A56C", 3.4), line([(sx + .4, sy - 4), (sx + 1.6, sy - 18)], "#B98356", 3.4)], 0)
-    g.add(transform(canopy(c1, c2, dots), dx=top[0], dy=top[1] + 6, rot=9), 1)
+    top = (sx + 7, sy - 88)
+    g.add([line([(sx, sy), top], "#D9A56C", 3.6), line([(sx + .4, sy - 4), (sx + 1.6, sy - 18)], "#B98356", 3.6)], 0)
+    g.add(transform(canopy(c1, c2, dots), dx=top[0], dy=top[1] + 7, rot=9, s=1.15), 1)
     return g.shapes()
 
 
@@ -406,7 +403,6 @@ def ball_sprite(R=13.5):
         if c != WHITE:
             o.append(Sh(mer(b0) + mer(b1)[::-1], c))
     o.append(oval(p1[0], p1[1], 3, col=WHITE))
-    o.append(Sh(ellp(cx, cy, R, R, 30)[2:15] + [(cx + R * .55, cy + R * .3)], INK, op=.13))
     o.append(oval(cx - R * .42, cy - R * .45, R * .26, R * .16, col=WHITE, rot=-35, op=.85, tag="detail"))
     return o
 
@@ -694,16 +690,21 @@ def sun(face="smile"):
 
 
 def gull_sprite():
-    grey, tip = "#C9D2E2", "#56607E"
-    o = [Sh(crs([(-2, -6), (-12, -26), (-24, -34), (-38, -32), (-26, -24), (-14, -8)], 5), grey)]
-    o.append(Sh(crs([(-31, -33), (-38, -32), (-33, -29)], 3), tip))
-    o.append(Sh(crs([(12, 2), (24, -2), (24, 5), (14, 6)], 3), "#E4E9F2"))
-    o.append(oval(0, 0, 15, 8, col=WHITE, cel=.6))
-    o.append(oval(-14, -4, 7.5, col=WHITE, cel=.6))
-    o.append(Sh([(-20, -5), (-29, -2.5), (-20, -1)], "#FFB020"))
-    o.append(oval(-16, -6, 1.6, col=INK))
-    o.append(Sh(crs([(4, -5), (16, -24), (32, -34), (42, -30), (28, -20), (12, -4)], 5), grey))
-    o.append(Sh(crs([(36, -33), (43, -30), (37, -27)], 3), tip))
+    """A seagull flying to the left, wings up (origin at the middle of its body)."""
+    grey, far_grey, tip = "#C9D2E2", "#AEB9CF", "#4E5876"
+
+    def wing(c, col):
+        out = [Sh(profile(c, lambda t: 2 + 13 * (1 - t) ** .8), col)]
+        k = len(c) * 2 // 3
+        out.append(Sh(profile(c[k - 1:], lambda t: 2 + 13 * (1 - (t * (len(c) - k) + k - 1) / (len(c) - 1)) ** .8), tip))
+        return out
+    o = wing(crs([(6, -4), (14, -18), (24, -27), (38, -30)], 6, closed=False), far_grey)
+    o.append(Sh(crs([(12, -1), (25, -6), (26, 1), (14, 4)], 3), "#E4E9F2"))
+    o.append(oval(0, 0, 16, 7.5, col=WHITE, cel=.6))
+    o.append(oval(-15, -4, 7.4, col=WHITE, cel=.6))
+    o.append(Sh(crs([(-21, -6), (-30, -3.5), (-21, -1.5)], 3), "#FFB020"))
+    o.append(oval(-17, -6, 1.7, col=INK))
+    o += wing(crs([(-2, -3), (-9, -19), (-20, -30), (-36, -33)], 6, closed=False), grey)
     return o
 
 
@@ -718,7 +719,7 @@ def dolphin():
     sx, sy = P(x, y)
     col, belly = "#6E9FDC", "#DDEBFA"
     c = crs([(30, -4), (24, -26), (6, -44), (-18, -48), (-36, -38)], 6, closed=False)
-    o = [line(ellp(sx + 22, sy, 16, 6, 24) + [ellp(sx + 22, sy, 16, 6, 24)[0]], WHITE, 2.4, op=.8)]
+    o = [line(ellp(22, 0, 16, 6, 24) + [ellp(22, 0, 16, 6, 24)[0]], WHITE, 2.4, op=.8)]
     body = [Sh(profile(c, lambda t: 6 + 16 * math.sin(math.pi * min(1, t * 1.05)) ** .8), col, cel=.8)]
     body.append(Sh(crs([(27, -8), (36, -2), (40, -12), (30, -12)], 4), col))      # tail flukes
     body.append(Sh(crs([(0, -46), (6, -58), (10, -45)], 4), kit.tone(col, .85)))      # fin
@@ -727,21 +728,24 @@ def dolphin():
     body.append(oval(-24, -44, 2, 2.4, col=INK))
     body.append(oval(-24.6, -45, .8, col=WHITE, tag="detail"))
     body.append(line([(-40, -38), (-34, -36)], INK, 1.2))
-    o += transform(body, dx=sx, dy=sy)
     for dx, dy, r in ((-40, -6, 2.6), (-34, -16, 2), (-46, -14, 1.8), (34, -10, 2.2), (40, -18, 1.8)):
-        o.append(oval(sx + dx, sy + dy, r, col=WHITE, op=.9, tag="detail"))
-    return o
+        body.append(oval(dx, dy, r, col=WHITE, op=.9, tag="detail"))
+    return transform(o + body, dx=sx, dy=sy, flip=True)
 
 
 def fish():
     x, y = GROUND["fish"]
     sx, sy = P(x, y)
-    col = ORANGE
-    o = [line(ellp(sx + 6, sy, 12, 4.5, 24) + [ellp(sx + 6, sy, 12, 4.5, 24)[0]], WHITE, 2, op=.8)]
-    body = [Sh(crs([(10, -10), (20, -14), (18, -4)], 3), col), oval(0, -16, 11, 7, col=col, rot=-20, cel=.7),
-            oval(-5, -19, 1.8, col=INK), line([(1, -22), (4, -14)], kit.tone(col, .8), 1.4)]
+    col, fin = ORANGE, "#F27A1E"
+    o = [line(ellp(sx + 6, sy, 13, 4.6, 24) + [ellp(sx + 6, sy, 13, 4.6, 24)[0]], WHITE, 2, op=.8)]
+    body = [Sh(crs([(8, -13), (21, -22), (23, -15), (19, -6)], 3), fin, cel=.4),
+            Sh(crs([(-4, -23), (3, -31), (10, -24)], 3), fin),
+            oval(0, -16, 13, 8.5, col=col, rot=-25, cel=.8),
+            Sh(tf(rrect(-2, -9, 4.4, 18, 2.2), rot=-25, dx=2, dy=-17), WHITE),
+            oval(-7, -20, 3.3, col=WHITE), oval(-7.8, -20, 1.8, col=INK),
+            line(crs([(-12, -14), (-9.5, -12.5), (-8, -14)], 3, closed=False), INK, 1.2)]
     o += transform(body, dx=sx, dy=sy)
-    for dx, dy, r in ((-12, -6, 1.8), (16, -2, 1.6), (-8, -28, 1.4)):
+    for dx, dy, r in ((-14, -6, 1.9), (18, -2, 1.6), (-10, -32, 1.5), (26, -26, 1.3)):
         o.append(oval(sx + dx, sy + dy, r, col=WHITE, op=.9, tag="detail"))
     return o
 
@@ -820,7 +824,7 @@ def scene():
 
 
 # hide spots: (centre in scene px, size in scene px, the thing drawn in front of part of him, tint)
-HIDES = [((188, 314), 44, "castle", "sand"), ((418, 312), 42, "boat", "blue"), ((316, 272), 40, "ball", "white")]
+HIDES = [((160, 306), 44, "castle", "sand"), ((418, 312), 42, "boat", "blue"), ((316, 272), 40, "ball", "white")]
 
 # for `build.py preview`: the changed version shows these
 PREVIEW_CHANGES = [("crab", 0), ("castle", 0), ("umbrella", 1), ("boat", 1), ("shells", 0), ("dolphin", "extra:dolphin")]

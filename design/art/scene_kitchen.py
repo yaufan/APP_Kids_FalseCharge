@@ -225,7 +225,8 @@ def fridge(col=FRIDGE, magnets=3):
     w, d, h = 38, 38, 92
     fy = y0 + d + .15
     g = Group()
-    g.add(ISO.box(x0, y0, 0, w, d, h, col), 0)
+    # the white fridge prints as paper in riso: give its side a pale blue of its own
+    g.add(ISO.box(x0, y0, 0, w, d, h, col, right="#C3D0EA" if col == FRIDGE else None), 0)
     seam = mix(col, "#8C96B0", .45)
     g.add(on_rwall([line([(1.5, 0), (w - 1.5, 0)], seam, 1.3)], x0, 62, fy), 1)
     g.add(on_rwall([Sh(rect(1, 0, w - 2, 3), mix(col, "#8C96B0", .3))], x0, 3, fy), 1)
@@ -256,8 +257,8 @@ def window(cur=ORANGE, dots=False):
         mx = 2 if not side else W - 2
         o.append(line([(mx - 4, 24), (mx + 4, 24.5)], kit.tone(cur, .8, 1.1), 2))
         if dots:
-            for u, v in ((-1, 2), (4, 10), (-2, 16), (3, 24), (0, 29), (5, 2)):
-                o.append(oval(u if not side else W - u, v, 1.5, col=WHITE, tag="detail"))
+            for u, v in ((-1, 3), (4, 11), (-2, 19), (3, 27)):
+                o.append(oval(u if not side else W - u, v, 2.2, col=WHITE, tag="detail"))
     g = Group()
     g.add(on_rwall(o, x0, z0 + Hh, .2), 0)
     g.add(ISO.box(x0 - 3, 0, z0 - 3, W + 6, 6, 3, WHITE, left="#F1F4FA"), 1)
@@ -344,10 +345,9 @@ def clock(rim=ORANGE, face="smile"):
     cy_, cz = PLACE["clock"]
     r = 26
     o = [oval(0, 0, r, col=rim), oval(0, 0, r - 5, col=WHITE)]
-    for i in range(12):
-        a = math.radians(i * 30)
-        big = i % 3 == 0
-        o.append(oval((r - 9) * math.cos(a), (r - 9) * math.sin(a), 1.6 if big else .9, col=INK if big else METAL, tag="detail"))
+    for i in range(4):
+        a = math.radians(i * 90)
+        o.append(oval((r - 8.5) * math.cos(a), (r - 8.5) * math.sin(a), 1.8, col=INK, tag="detail"))
     o.append(line([(0, 0), (-7, -6)], INK, 2.4))
     o.append(line([(0, 0), (8, -9)], INK, 1.8))
     o.append(oval(0, 0, 1.8, col=RED))
@@ -436,8 +436,8 @@ def apron(col=ORANGE, dots=False):
     o.append(line([(9, 21), (17, 27)], kit.tone(col, .85), 1.6))
     o.append(Sh(rrect(-6, 26, 12, 9, 2.4), WHITE))
     if dots:
-        for u, v in ((-4, 13), (3, 16), (-8, 31), (8, 33), (0, 21), (-3, 39), (5, 39)):
-            o.append(oval(u, v, 1.6, col=WHITE, tag="detail"))
+        for u, v in ((-3, 13), (4, 18), (-8, 31), (8, 33), (-1, 24), (-2, 39)):
+            o.append(oval(u, v, 2.2, col=WHITE, tag="detail"))
     else:
         o.append(line([(-5, 15), (5, 15)], WHITE, 1.4))
     return on_rwall(o, hx, hz, .3)
@@ -579,7 +579,6 @@ def plant(pot_col=TERRACOTTA):
     R, h = 10, 18
     sx, sy = P(x, y)
     rx, ry = R * 1.2247 * ISO.k, R * .7071 * ISO.k
-    body = [(sx - rx * .8, sy)] + [(sx + rx * .8 * math.cos(math.radians(a)), sy + ry * .8 * math.sin(math.radians(a))) for a in range(0, 181, 15)][::-1]
     body = [(sx + rx * .8 * math.cos(math.radians(a)), sy + ry * .8 * math.sin(math.radians(a))) for a in range(0, 181, 15)]
     body += [(sx - rx, sy - h * ISO.k), (sx + rx, sy - h * ISO.k)]
     g.add([Sh(body, pot_col, cel=.8)], 0)
