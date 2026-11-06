@@ -7,8 +7,10 @@ import '../../app/theme.dart';
 import '../../app/widgets.dart';
 import '../../core/content.dart';
 import '../../core/providers.dart';
+import '../../core/puzzles.dart';
 import '../../core/scenes.dart';
 import '../play/play_screen.dart';
+import '../play/scene_view.dart';
 
 /// The album: a photo of each place played to the end, with 小變's stamp
 /// and its stars; empty frames for the ones still to visit.
@@ -62,7 +64,7 @@ class AlbumScreen extends ConsumerWidget {
   }
 }
 
-class _Photo extends StatelessWidget {
+class _Photo extends ConsumerWidget {
   const _Photo({required this.place, required this.style, required this.stars});
 
   final Place place;
@@ -70,14 +72,20 @@ class _Photo extends StatelessWidget {
   final int stars;
 
   @override
-  Widget build(BuildContext context) => Semantics(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scene = ref.watch(sceneProvider(place)).value;
+    return Semantics(
         label: '${place.zh}，$stars 顆星',
         child: Stack(clipBehavior: Clip.none, children: [
           EyeCard(
             radius: 10,
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(6), child: SizedBox.expand(child: Art(backgroundPath(style, place), fit: BoxFit.cover)))),
+              Expanded(
+                child: scene == null
+                    ? ClipRRect(borderRadius: BorderRadius.circular(6), child: SizedBox.expand(child: Art(backgroundPath(style, place), fit: BoxFit.cover)))
+                    : SceneView(picture: Picture.of(scene), style: style, radius: 6),
+              ),
               const SizedBox(height: 4),
               Row(children: [
                 Expanded(child: Text(place.zh, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700))),
@@ -88,6 +96,7 @@ class _Photo extends StatelessWidget {
           const Positioned(right: -8, bottom: 22, child: Stamp(size: 58)),
         ]),
       );
+  }
 }
 
 class _Empty extends StatelessWidget {

@@ -165,16 +165,30 @@ class _HintGlowState extends State<HintGlow> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) => IgnorePointer(
         child: AnimatedBuilder(
           animation: _c,
-          builder: (_, _) => DecoratedBox(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(colors: [
-                Eye.glow.withValues(alpha: 0.55 + 0.3 * _c.value),
-                Eye.glow.withValues(alpha: 0.25 * _c.value),
-                Eye.glow.withValues(alpha: 0),
-              ], stops: const [0.2, 0.7, 1]),
-            ),
-          ),
+          builder: (_, _) {
+            final t = _c.value;
+            return Stack(fit: StackFit.expand, children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(colors: [
+                    Eye.glow.withValues(alpha: 0.5 + 0.3 * t),
+                    Eye.glow.withValues(alpha: 0.3 + 0.2 * t),
+                    Eye.glow.withValues(alpha: 0),
+                  ], stops: const [0.25, 0.65, 1]),
+                ),
+              ),
+              Transform.scale(
+                scale: 0.82 + 0.12 * t,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFFFB800).withValues(alpha: 0.6 + 0.4 * t), width: 4),
+                  ),
+                ),
+              ),
+            ]);
+          },
         ),
       );
 }

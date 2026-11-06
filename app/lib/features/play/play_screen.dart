@@ -14,6 +14,7 @@ import '../../core/puzzles.dart';
 import '../../core/scenes.dart';
 import '../../core/sounds.dart';
 import 'change_game.dart';
+import 'scene_view.dart';
 import 'hide_game.dart';
 import 'odd_game.dart';
 import 'two_game.dart';
@@ -355,7 +356,7 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
           ),
         ]),
       ),
-      if (_finished) Finished(place: _place, stars: ref.watch(gameProvider.select((g) => g.starsOf(_place))), style: style, onAgain: _again, onHome: _home),
+      if (_finished) Finished(scene: widget.scene, stars: ref.watch(gameProvider.select((g) => g.starsOf(_place))), style: style, onAgain: _again, onHome: _home),
     ]);
   }
 }
@@ -363,9 +364,9 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
 /// A game played to the end: stars, the place's photo with 小變's stamp
 /// going into the album, and play again or go home.
 class Finished extends StatefulWidget {
-  const Finished({super.key, required this.place, required this.stars, required this.style, required this.onAgain, required this.onHome});
+  const Finished({super.key, required this.scene, required this.stars, required this.style, required this.onAgain, required this.onHome});
 
-  final Place place;
+  final Scene scene;
   final int stars;
   final Style style;
   final VoidCallback onAgain;
@@ -387,10 +388,10 @@ class _FinishedState extends State<Finished> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) => Positioned.fill(
         child: Container(
-          decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xF2FFF6E0), Color(0xF2FFE6EE)])),
+          decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFFFF6E0), Color(0xFFFFE6EE)])),
           child: SafeArea(
             child: LayoutBuilder(builder: (context, box) {
-              final photo = math.min(box.maxWidth * 0.62, box.maxHeight * 0.34);
+              final photo = math.min(box.maxWidth * 0.6, box.maxHeight * 0.32);
               return Center(
                 child: SingleChildScrollView(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -407,22 +408,22 @@ class _FinishedState extends State<Finished> with SingleTickerProviderStateMixin
                         EyeCard(
                           radius: 14,
                           padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: SizedBox.square(dimension: photo, child: Art(backgroundPath(widget.style, widget.place), fit: BoxFit.cover)),
-                            ),
+                          child: SizedBox(
+                            width: photo,
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            SceneView(picture: Picture.of(widget.scene), style: widget.style, side: photo, radius: 8),
                             const SizedBox(height: 6),
                             Row(children: [
-                              Text(widget.place.zh, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                              Text(widget.scene.place.zh, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
                               const SizedBox(width: 8),
                               Stars(count: widget.stars, size: 18),
                             ]),
                           ]),
+                          ),
                         ),
                         Positioned(
-                          right: -14,
-                          bottom: 14,
+                          right: -10,
+                          bottom: 4,
                           child: ScaleTransition(
                             scale: CurvedAnimation(parent: _c, curve: const Interval(0.45, 0.8, curve: Curves.elasticOut)),
                             child: const Stamp(size: 84),

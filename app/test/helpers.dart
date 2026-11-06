@@ -68,7 +68,7 @@ class TestApp {
   }
 
   Future<void> tapLabel(String label, {int ms = 400}) async {
-    await tester.tap(find.bySemanticsLabel(label).first);
+    await tester.tap(find.bySemanticsLabel(label).last);
     await settle(ms);
   }
 

@@ -81,7 +81,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: LayoutBuilder(builder: (context, box) {
             final wide = box.maxWidth > 600;
             final pad = wide ? (box.maxWidth - 600) / 2 + 16 : 16.0;
-            return ListView(padding: EdgeInsets.fromLTRB(pad, 8, pad, 24), children: [
+            return Column(children: [
+              Expanded(
+                child: ListView(padding: EdgeInsets.fromLTRB(pad, 8, pad, 12), children: [
               Row(children: [
                 const Spacer(),
                 Semantics(
@@ -134,8 +136,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 childAspectRatio: 0.86,
                 children: [for (final p in Place.values) PlaceCard(place: p, onTap: () => _open(p))],
               ),
-              const SizedBox(height: 20),
-              Center(child: WideButton(label: Strings.album, icon: Icons.photo_library_rounded, color: Eye.coral, onTap: () => context.push('/album'))),
+                ]),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 14),
+                child: WideButton(label: Strings.album, icon: Icons.photo_library_rounded, color: Eye.coral, onTap: () => context.push('/album')),
+              ),
             ]);
           }),
         ),
