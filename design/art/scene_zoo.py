@@ -1,24 +1,29 @@
 """動物園 (zoo): a floating zoo island (the park's isometric tile, 200 x 200 world units, 1.5 px per
-unit) under a warm afternoon sky.
+unit) under a warm peach afternoon sky, so it does not look like the park at a glance.
 
-The back half of the tile is a sandy savanna behind a low wooden fence (an acacia tree, a giraffe,
-an elephant, a zebra, a lion on his rock), the left corner a bamboo grove with a panda, the right
-corner a pool (penguins on a rock, a hippo), and the front a stone path with a little train, a
-turtle, two flamingos at a puddle and a sign with a paw print. A monkey sits in the acacia; the sun
-and a flying parrot are in the sky.
+The back half of the tile is a sandy savanna behind a low wooden fence (a fat-trunked savanna tree
+with a monkey in it, a giraffe, an elephant, a zebra, a lion on his flat rock), the left corner a
+bamboo grove with a panda, the right corner a pool (penguins on a rock, a hippo), and the front a
+paved path with a little train, a turtle, two flamingos at a puddle and a sign with a paw print (no
+words). The sun and a flying parrot are in the sky.
 
     background()        sky, clouds, the tile (grass, savanna sand, soil), paths, the pool and the
-                        puddle, the acacia, bamboo, fences, rocks, bushes: everything that never
-                        changes (bg.svg, 600 x 600)
+                        puddle, the savanna tree, bamboo, fences, rocks, bushes: everything that
+                        never changes (bg.svg, 600 x 600)
     one function per thing and per variant, returning shapes in scene px; each thing's box is the
                         bounding box of all its variants (kit.SceneArt)
     PLACE               where each thing stands (scene px): move things here, then run
                         `python3 build.py layout zoo`, `python3 build.py zoo` and
-                        `python3 build.py preview zoo out.png`
+                        `python3 build.py preview zoo out.png`. The big things are placed so that
+                        no two big boxes overlap (with the app's gap): keep it that way.
 
 Colours that 小變 hides against come from kit.TINT (bamboo bushes = leaf, the savanna = sand, the
-acacia trunk = wood). HIDES gives each hide spot as (centre, size, the thing drawn in front of part
-of him, tint); his z is that thing's z minus one.
+tree trunk = wood). HIDES gives each hide spot as (centre, size, the thing drawn in front of part of
+him, tint); his z is that thing's z minus one.
+
+Background size: the riso (b) and crayon (c) files are close to the 70 KB limit. Fences are boxes in
+style a but plain strokes in b and c (one element per colour); the pool rim and the penguins' rock
+are simpler in c.
 """
 import math
 
@@ -766,7 +771,7 @@ def sign(kind="paw"):
     return o
 
 
-# ---------------------------------------------------------------- monkey sitting on the acacia branch (facing left)
+# ---------------------------------------------------------------- monkey sitting on the tree's branch (facing left)
 MONKEY = "#A86B42"
 MONKEY_FACE = "#F5D2A8"
 
