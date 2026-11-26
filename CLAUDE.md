@@ -60,3 +60,13 @@
 - `app/lib/core/`：場景資料、出題規則、存檔、聲音、語音。
 - `app/lib/features/`：首頁、四種玩法、相簿、休息、家長關卡和家長模式。
 - 圖：`design/art/`（Python：`kit.py` 一份幾何、三種畫法；`scene_<場景>.py`、`chameleon.py`、`icon.py`；`build.py` 產生和檢查，`fluttercheck` 用真的 flutter_svg 比對）；聲音：`design/sounds/make_sounds.py`。
+- 玩的時間：`app/lib/app/app.dart` 的 `RestGuard`（只算小朋友玩的時間：家長關卡、家長模式、休息、背景都不算；手機時間往回調不多給）；這一次玩了多久和上次看到 APP 的時間存在 `game.dart` 的 `Sitting`（關掉十分鐘內再打開接著算，`Game.opened`）。
+- 家長：`parent_gate.dart` 的 `ParentGuard`（背景或 5 分鐘沒碰就關掉、用掉 `ParentPass`）；答錯的等待是 `game.dart` 的 `GateLock`（1、5、15 分鐘，存起來）。
+- `app/lib/app/widgets.dart`：`speak`（背景不說話）、`HushOnLeave`（離開畫面只停自己那句）、`BackKey`（手機返回鍵＝畫面上的回家，首頁和休息不動）。小朋友換的畫風只存在 `providers.dart` 的 `pickedStyleProvider`，畫面用 `styleProvider`；家長的「一開始的畫風」是 `Settings.style`。
+- 測試：`rules_test`、`scenes_test`（場景檔和圖、每個年齡出得了題、大難度每個躲藏的地方都看得到一點小變）、`safety_test`（權限、語音引擎、不備份、CI 檢查的權限）、`version_test`、`screens_test`（玩的時間、返回鍵、家長頁面、畫風、提示、語音、聲音走媒體音量）、`flow_test`、`demo/demo_video_test.dart`。
+
+## 目前的狀態（2026-11-26）
+- 0.1.0 已發布（2026-11-06）。
+- 0.1.1（修正版）做好了、測試都過了，推到工作分支 `claude/relaxed-albattani-6mbwpz`，**還沒發布**（還沒推 `main`，推之前要先問使用者）。修了：家長模式和背景的時間不算玩的時間、關掉十分鐘內再打開接著算、手機時間往回調不多玩；返回鍵不會關掉 APP；家長頁面在背景或 5 分鐘沒碰會自己關、家長題目答錯越等越久（存起來）；小朋友換畫風不改家長的設定；自動提示只說一次、背景不說話；語音的蓋來蓋去；音效改走媒體音量；Android 11 以上的語音引擎；不備份；海邊大難度沙堡後面的小變露出眼睛。
+- 留到以後（小問題）：時間到時正在玩的那一題直接被切掉（可以像拼拼樂工坊一樣讓那一題玩完）；家長題目是國字加法，快 5 歲的小朋友可能答得出來；GitHub Actions 的外掛還沒用固定編號。
+- 還沒在真手機上試：媒體音量的聲音大小、語音在 Android 11 以上念不念得出來、返回鍵和往回滑、家長模式 5 分鐘自己關。
