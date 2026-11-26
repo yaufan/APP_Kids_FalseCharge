@@ -86,6 +86,12 @@ class RecordingSounds implements Sounds {
 
 /// Plays through audioplayers: a pool per sound, one looping player for the
 /// music; quiet while the app is in the background.
+///
+/// On Android everything plays on the media stream (the volume a child's
+/// parent turns up for videos), not the ringer: phones on vibrate or silent
+/// still play the game's sounds. No audio focus is asked for, so the
+/// sounds never stop each other or the voice. On iOS it is the ambient
+/// category, which mixes with other sounds.
 class SystemSounds implements Sounds {
   SystemSounds() {
     _lifecycle = AppLifecycleListener(onHide: () => _setAway(true), onShow: () => _setAway(false));
@@ -115,9 +121,19 @@ class SystemSounds implements Sounds {
     _update();
   }
 
-  Future<void> _ready() => _setUp ??= AudioPlayer.global.setAudioContext(
-        AudioContextConfig(focus: AudioContextConfigFocus.mixWithOthers, respectSilence: true).build(),
-      );
+  /// How the short sounds play.
+  static final effectsContext = AudioContext(
+    android: const AudioContextAndroid(usageType: AndroidUsageType.game, contentType: AndroidContentType.sonification, audioFocus: AndroidAudioFocus.none),
+    iOS: AudioContextIOS(category: AVAudioSessionCategory.ambient),
+  );
+
+  /// How the music plays.
+  static final musicContext = AudioContext(
+    android: const AudioContextAndroid(usageType: AndroidUsageType.media, contentType: AndroidContentType.music, audioFocus: AndroidAudioFocus.none),
+    iOS: AudioContextIOS(category: AVAudioSessionCategory.ambient),
+  );
+
+  Future<void> _ready() => _setUp ??= AudioPlayer.global.setAudioContext(effectsContext);
 
   @override
   void play(String sfx) {
@@ -128,7 +144,7 @@ class SystemSounds implements Sounds {
   Future<void> _play(String sfx) async {
     try {
       await _ready();
-      final pool = await (_pools[sfx] ??= AudioPool.createFromAsset(path: 'sounds/$sfx.wav', maxPlayers: 3));
+      final pool = await (_pools[sfx] ??= AudioPool.create(source: AssetSource('sounds/$sfx.wav'), maxPlayers: 3, audioContext: effectsContext));
       await pool.start(volume: _sfxVolume);
     } catch (_) {
       _pools.remove(sfx);
@@ -160,6 +176,7 @@ class SystemSounds implements Sounds {
       var loop = _loop;
       if (loop == null) {
         loop = _loop = AudioPlayer();
+        await loop.setAudioContext(musicContext);
         await loop.setReleaseMode(ReleaseMode.loop);
       }
       await loop.stop();
