@@ -24,7 +24,7 @@ class PlaceScreen extends ConsumerStatefulWidget {
   ConsumerState<PlaceScreen> createState() => _PlaceScreenState();
 }
 
-class _PlaceScreenState extends ConsumerState<PlaceScreen> {
+class _PlaceScreenState extends ConsumerState<PlaceScreen> with HushOnLeave {
   late final Sounds _sounds;
 
   @override
@@ -43,8 +43,10 @@ class _PlaceScreenState extends ConsumerState<PlaceScreen> {
   }
 
   void _say(String zh) {
-    if (mounted && ref.read(gameProvider).settings.voice) ref.read(voiceProvider).say(zh);
+    if (mounted) speak(ref, zh);
   }
+
+  void _home() => context.canPop() ? context.pop() : context.go('/');
 
   void _play(Mode m) {
     _say(m.zh);
@@ -54,11 +56,11 @@ class _PlaceScreenState extends ConsumerState<PlaceScreen> {
   @override
   Widget build(BuildContext context) {
     final g = ref.watch(gameProvider);
-    final style = g.settings.style;
+    final style = ref.watch(styleProvider);
     final scene = ref.watch(sceneProvider(widget.place)).value;
     final modes = [for (final m in Mode.values) if (g.settings.shows(m)) m];
     final done = g.done[widget.place] ?? const {};
-    return Scaffold(
+    return BackKey(onBack: _home, child: Scaffold(
       body: Sky(
         top: Eye.sky,
         bottom: Eye.cream,
@@ -67,7 +69,7 @@ class _PlaceScreenState extends ConsumerState<PlaceScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               child: Row(children: [
-                RoundButton(label: Strings.home, icon: Icons.home_rounded, size: 50, onTap: () => context.canPop() ? context.pop() : context.go('/')),
+                RoundButton(label: Strings.home, icon: Icons.home_rounded, size: 50, onTap: _home),
                 const SizedBox(width: 10),
                 Pill(text: widget.place.zh, color: placeColor(widget.place)),
                 const SizedBox(width: 8),
@@ -103,7 +105,7 @@ class _PlaceScreenState extends ConsumerState<PlaceScreen> {
           ]),
         ),
       ),
-    );
+    ));
   }
 }
 

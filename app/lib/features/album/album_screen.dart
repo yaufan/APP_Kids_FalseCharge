@@ -17,12 +17,14 @@ import '../play/scene_view.dart';
 class AlbumScreen extends ConsumerWidget {
   const AlbumScreen({super.key});
 
+  void _home(BuildContext context) => context.canPop() ? context.pop() : context.go('/');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final g = ref.watch(gameProvider);
-    final style = g.settings.style;
+    final style = ref.watch(styleProvider);
     final have = Place.values.where(g.inAlbum).length;
-    return Scaffold(
+    return BackKey(onBack: () => _home(context), child: Scaffold(
       body: Sky(
         top: const Color(0xFFFFEFE6),
         bottom: Eye.cream,
@@ -31,7 +33,7 @@ class AlbumScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               child: Row(children: [
-                RoundButton(label: Strings.home, icon: Icons.home_rounded, size: 50, onTap: () => context.canPop() ? context.pop() : context.go('/')),
+                RoundButton(label: Strings.home, icon: Icons.home_rounded, size: 50, onTap: () => _home(context)),
                 const SizedBox(width: 10),
                 const Pill(text: Strings.album, color: Eye.coral),
                 const Spacer(),
@@ -60,7 +62,7 @@ class AlbumScreen extends ConsumerWidget {
           ]),
         ),
       ),
-    );
+    ));
   }
 }
 

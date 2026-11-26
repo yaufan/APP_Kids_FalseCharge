@@ -27,8 +27,15 @@ final sceneProvider = FutureProvider.family<Scene, Place>((ref, place) => Scene.
 final gameProvider = NotifierProvider<GameNotifier, Game>(GameNotifier.new);
 
 class GameNotifier extends Notifier<Game> {
+  /// The save, as the app opens: the sitting goes on if the app was closed
+  /// for less than ten minutes (Game.opened).
   @override
-  Game build() => ref.read(savedGameProvider);
+  Game build() {
+    final saved = ref.read(savedGameProvider);
+    final opened = saved.opened(ref.read(clockProvider)());
+    if (!identical(opened, saved)) ref.read(storeProvider).write(opened.toJson());
+    return opened;
+  }
 
   void change(Game Function(Game g) f) {
     final next = f(state);
@@ -40,15 +47,19 @@ class GameNotifier extends Notifier<Game> {
   void settings(Settings Function(Settings s) f) => change((g) => g.copyWith(settings: f(g.settings)));
 }
 
-/// When this sitting started (reset when a parent lets play go on).
-final sessionStartProvider = NotifierProvider<SessionStart, DateTime>(SessionStart.new);
+/// The style the child switched to with the palette button, for this time
+/// only (null: the parent's 「一開始的畫風」, which it never changes).
+final pickedStyleProvider = NotifierProvider<PickedStyle, Style?>(PickedStyle.new);
 
-class SessionStart extends Notifier<DateTime> {
+class PickedStyle extends Notifier<Style?> {
   @override
-  DateTime build() => ref.read(clockProvider)();
+  Style? build() => null;
 
-  void restart() => state = ref.read(clockProvider)();
+  void pick(Style? s) => state = s;
 }
+
+/// The style the pictures are drawn in now.
+final styleProvider = Provider<Style>((ref) => ref.watch(pickedStyleProvider) ?? ref.watch(gameProvider.select((g) => g.settings.style)));
 
 /// Things said only once per app start (the welcome on the home page).
 final onceProvider = Provider<Set<String>>((ref) => <String>{});

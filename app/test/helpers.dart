@@ -30,12 +30,13 @@ class TestApp {
   Game get game => container.read(gameProvider);
   void change(Game Function(Game g) f) => container.read(gameProvider.notifier).change(f);
 
-  static Future<TestApp> start(WidgetTester tester, {Game game = const Game(), Size size = const Size(1080, 2340), double ratio = 2.75, String at = '/', int seed = 1}) async {
+  static Future<TestApp> start(WidgetTester tester, {Game game = const Game(), Size size = const Size(1080, 2340), double ratio = 2.75, String at = '/', int seed = 1, DateTime? now}) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = ratio;
     addTearDown(tester.view.reset);
     final store = MemoryStore();
     final app = TestApp(tester, store, RecordingSounds(), RecordingVoice());
+    if (now != null) app.now = now;
     await tester.pumpWidget(RepaintBoundary(
       key: shotKey,
       child: ProviderScope(
@@ -71,6 +72,61 @@ class TestApp {
     await tester.tap(find.bySemanticsLabel(label).last);
     await settle(ms);
   }
+
+  /// The phone's clock moves on [d] while the app is open (the play-time
+  /// keeper looks every two seconds).
+  Future<void> pass(Duration d) async {
+    now = now.add(d);
+    await settle(2600);
+  }
+
+  /// The app goes to the background (home button, a phone call)…
+  Future<void> hide() async {
+    for (final s in [AppLifecycleState.inactive, AppLifecycleState.hidden, AppLifecycleState.paused]) {
+      tester.binding.handleAppLifecycleStateChanged(s);
+    }
+    await settle();
+  }
+
+  /// …and comes back.
+  Future<void> show() async {
+    for (final s in [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+      tester.binding.handleAppLifecycleStateChanged(s);
+    }
+    await settle();
+  }
+
+  Future<void> wait(double seconds) async {
+    for (var i = 0; i < (seconds * 4).ceil(); i++) {
+      await settle(250);
+    }
+  }
+
+  int get _gateAnswer {
+    const digits = {'零': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9};
+    final parts = (find.textContaining('加').evaluate().first.widget as Text).data!.split(' ');
+    return digits[parts[0]]! + digits[parts[2]]!;
+  }
+
+  Future<void> _typeGate(int n) async {
+    for (final d in '$n'.split('')) {
+      await tester.tap(find.byKey(ValueKey('gate-key-$d')));
+      await settle(200);
+    }
+    await settle(800);
+  }
+
+  /// A grown-up answers the parent gate.
+  Future<void> answerGate() => _typeGate(_gateAnswer);
+
+  /// A child guesses (wrong).
+  Future<void> wrongGate() {
+    final a = _gateAnswer;
+    return _typeGate('${a + 1}'.length == '$a'.length ? a + 1 : a - 1);
+  }
+
+  /// The app as it would open again with what it saved.
+  Game get saved => Game.fromJson(store.saved);
 
   Future<void> end() async {
     await tester.pumpWidget(const SizedBox());

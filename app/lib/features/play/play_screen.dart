@@ -40,7 +40,8 @@ class PlayHooks {
 /// One game in one place: a few rounds, then a star and the place in the
 /// album (docs/design.md 「獎勵」). Never a fail: no clock, no score; a wrong
 /// tap only makes a soft sound. 小變 gives a hint when asked, or (with many
-/// hints) after a while without a find.
+/// hints) once after a while without a find; never while the app is in the
+/// background.
 class PlayScreen extends ConsumerWidget {
   const PlayScreen({super.key, required this.place, required this.mode});
 
@@ -51,7 +52,9 @@ class PlayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scene = ref.watch(sceneProvider(place));
     final look = ModeLook.of(mode);
-    return Scaffold(
+    return BackKey(
+      onBack: () => context.canPop() ? context.pop() : context.go('/'),
+      child: Scaffold(
       body: Sky(
         top: look.top,
         bottom: look.bottom,
@@ -60,6 +63,7 @@ class PlayScreen extends ConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, _) => Center(child: WideButton(label: Strings.toHome, icon: Icons.home_rounded, onTap: () => context.go('/'))),
         ),
+      ),
       ),
     );
   }
@@ -74,15 +78,21 @@ class PlayBoard extends ConsumerStatefulWidget {
   /// Rounds in one game (two pictures is one big round).
   static int rounds(Mode m) => m == Mode.two ? 1 : 3;
 
-  /// With many hints, 小變 shows where to look after this long without a find.
+  /// With many hints, 小變 shows where to look after this long without a
+  /// find (once: the glow stays until the next find).
   static const autoHint = Duration(seconds: 20);
 
   @override
   ConsumerState<PlayBoard> createState() => PlayBoardState();
 }
 
-class PlayBoardState extends ConsumerState<PlayBoard> {
+class PlayBoardState extends ConsumerState<PlayBoard> with HushOnLeave {
   late final Sounds _sounds;
+  AppLifecycleListener? _life;
+
+  /// The hint 小變 gives by himself is still to come (after a find, or a
+  /// new round); it waits while the app is in the background.
+  var _autoHintDue = false;
   late final math.Random _random;
   late Object _round;
   var _roundNo = 0;
@@ -108,6 +118,12 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
     _random = ref.read(randomProvider);
     _sounds.hold(this, Music.play);
     _sounds.play('amb_${_place.name}');
+    _life = AppLifecycleListener(
+      onHide: () => _hintTimer?.cancel(),
+      onShow: () {
+        if (_autoHintDue) _startHintTimer();
+      },
+    );
     _deal();
     WidgetsBinding.instance.addPostFrameCallback((_) => _ask());
   }
@@ -117,6 +133,7 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
     for (final t in [_hintTimer, _wait, _cap, _next]) {
       t?.cancel();
     }
+    _life?.dispose();
     _sounds.release(this);
     super.dispose();
   }
@@ -150,8 +167,7 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
   /// Says [zh] (and [en] if the parent turned English on); completes when
   /// it has been said.
   Future<void> _say(String zh, {String? en}) async {
-    final s = ref.read(gameProvider).settings;
-    if (mounted && s.voice) await ref.read(voiceProvider).say(zh, en: s.english && en != null && en.isNotEmpty ? en : null);
+    if (mounted) await speak(ref, zh, en: en);
   }
 
   void _ask() {
@@ -165,18 +181,31 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
     _say(text);
   }
 
+  /// A find or a new round: 小變's own hint comes [PlayBoard.autoHint]
+  /// later if nothing else is found (with many hints).
   void _restartHintTimer() {
+    _autoHintDue = !_finished && ref.read(gameProvider).settings.hints;
+    _startHintTimer();
+  }
+
+  void _startHintTimer() {
     _hintTimer?.cancel();
-    if (_finished || !ref.read(gameProvider).settings.hints) return;
+    if (!_autoHintDue) return;
+    final st = WidgetsBinding.instance.lifecycleState;
+    // In the background it waits until the app is back.
+    if (st == AppLifecycleState.hidden || st == AppLifecycleState.paused || st == AppLifecycleState.detached) return;
     _hintTimer = Timer(PlayBoard.autoHint, () => _giveHint(auto: true));
   }
 
   void _giveHint({bool auto = false}) {
     if (!mounted || _finished) return;
+    // One hint at a time: the glow stays, and 小變 does not say it again
+    // and again (the next one by himself comes after the next find).
+    _autoHintDue = false;
+    _hintTimer?.cancel();
     _sounds.play('hint');
     setState(() => _hint++);
     _setLine(Strings.hint);
-    _restartHintTimer();
   }
 
   void _found(String said, {required bool last}) {
@@ -194,6 +223,7 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
       _say(text);
       return;
     }
+    _autoHintDue = false;
     _hintTimer?.cancel();
     if (_round is TwoRound) _sounds.play('all_found');
     // The next round comes once 小變 has finished talking (and at least a
@@ -236,6 +266,7 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
     _done++;
     if (_done >= PlayBoard.rounds(_mode)) {
       ref.read(gameProvider.notifier).change((g) => g.finished(_place, _mode));
+      _autoHintDue = false;
       _hintTimer?.cancel();
       _sounds.play('star');
       setState(() {
@@ -279,7 +310,7 @@ class PlayBoardState extends ConsumerState<PlayBoard> {
   @override
   Widget build(BuildContext context) {
     final look = ModeLook.of(_mode);
-    final style = ref.watch(gameProvider.select((g) => g.settings.style));
+    final style = ref.watch(styleProvider);
     final hooks = PlayHooks(
       style: style,
       line: _setLine,

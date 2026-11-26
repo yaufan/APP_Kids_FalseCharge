@@ -49,9 +49,12 @@ abstract final class Strings {
   static const callParent = '請爸爸媽媽來幫忙喔！';
   static const parentGateTitle = '家長確認';
   static String gateQuestion(String a, String b) => '$a 加 $b 等於多少？';
-  static const gateRules = '答錯三次要等一分鐘。';
+  static const gateRules = '答錯三次要等一分鐘，再錯要等更久。';
   static const wrongAnswer = '不對喔，換一題。';
-  static String gateWait(int s) => '請等 $s 秒再試';
+  static String gateWait(Duration left) {
+    final s = (left.inMilliseconds / 1000).ceil();
+    return s <= 60 ? '請等 $s 秒再試' : '請等 ${(s / 60).ceil()} 分鐘再試';
+  }
   static const backspace = '刪掉';
   static const cancel = '取消';
 
@@ -62,11 +65,11 @@ abstract final class Strings {
   static const ageNote = '年紀越大，不一樣的地方越小、越多。2～3 歲只有很大、很明顯的變化，也不玩「兩張找不同」。';
   static const playTime = '每次可以玩多久';
   static String minutes(int m) => '$m 分鐘';
-  static const playTimeNote = '時間到了，小變會睡覺，請小朋友讓眼睛休息、看看遠方。要家長解開，或等一個小時，才能再玩。';
+  static const playTimeNote = '時間到了，小變會睡覺，請小朋友讓眼睛休息、看看遠方。要家長解開，或等一個小時，才能再玩。家長模式裡和 APP 放到背景的時間不算；關掉 APP 十分鐘內再打開，時間接著算。';
   static const playOn = '讓小朋友再玩一次（重新計時）';
   static const resting = '現在是休息時間。';
   static const style = '一開始的畫風';
-  static const styleNote = '三種畫風的題目一模一樣，小朋友玩的時候也可以點右上角換。';
+  static const styleNote = '三種畫風的題目一模一樣。小朋友玩的時候也可以點右上角換，只換這一次，下次打開還是這裡選的畫風。';
   static const hints = '提示';
   static const hintsMany = '多';
   static const hintsFew = '少';
@@ -91,6 +94,6 @@ abstract final class Strings {
   static const fullNote = '免費版有公園和海邊；完整版有全部六個場景。（測試版先全部打開。）';
   static const fullSwitch = '打開完整版（測試用）';
   static const about = '關於';
-  static const privacy = '不連網、不定位、沒有廣告、沒有帳號；玩的紀錄不會傳給任何人，只存在這支手機（和家長自己帳號的手機備份）裡。';
+  static const privacy = '不連網、不定位、沒有廣告、沒有帳號；玩的紀錄不會傳給任何人，只存在這支手機裡，也不會備份到雲端或搬到新手機。';
   static String version(String v) => '版本 $v';
 }

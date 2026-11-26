@@ -7,8 +7,77 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../core/content.dart';
 import '../core/providers.dart';
 import '../core/scenes.dart';
+import '../core/voice.dart';
 import 'strings.dart';
 import 'theme.dart';
+
+/// The screen that spoke last (its WidgetRef), so a screen going away
+/// hushes only its own line, never the next screen's first one.
+Object? _speaker;
+
+/// Whether the app is in sight (nothing is said in the background).
+bool get _inSight {
+  final s = WidgetsBinding.instance.lifecycleState;
+  return s == null || s == AppLifecycleState.resumed || s == AppLifecycleState.inactive;
+}
+
+/// Says [zh] out loud (if the parent left the voice on), then [en] if the
+/// parent turned English on. Completes when it has been said (or cut off
+/// by the next line). Nothing is said while the app is in the background.
+Future<void> speak(WidgetRef ref, String zh, {String? en}) {
+  final s = ref.read(gameProvider).settings;
+  if (!s.voice || !_inSight) return Future.value();
+  _speaker = ref;
+  return ref.read(voiceProvider).say(zh, en: s.english && en != null && en.isNotEmpty ? en : null);
+}
+
+/// Stops whatever is being said.
+void hush(WidgetRef ref) {
+  _speaker = null;
+  ref.read(voiceProvider).stop();
+}
+
+/// A screen that stops its own voice when the child leaves it, so a line
+/// does not go on over the next screen.
+mixin HushOnLeave<T extends ConsumerStatefulWidget> on ConsumerState<T> {
+  late final Voice _hush;
+  late final Object _me;
+
+  @override
+  void initState() {
+    super.initState();
+    _hush = ref.read(voiceProvider);
+    _me = ref;
+  }
+
+  @override
+  void dispose() {
+    if (identical(_speaker, _me)) {
+      _speaker = null;
+      _hush.stop();
+    }
+    super.dispose();
+  }
+}
+
+/// The phone's back key or back gesture does what the screen's own way
+/// back does ([onBack]), never closes the app; with no [onBack] (the home
+/// page, the rest) it does nothing.
+class BackKey extends StatelessWidget {
+  const BackKey({super.key, this.onBack, required this.child});
+
+  final VoidCallback? onBack;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) onBack?.call();
+        },
+        child: child,
+      );
+}
 
 /// A drawing from assets/art/ (nothing at all if it is missing).
 class Art extends StatelessWidget {
@@ -32,12 +101,12 @@ class Chameleon extends ConsumerWidget {
 
   final String pose;
 
-  /// The parent's style if not given.
+  /// The style being played if not given.
   final Style? style;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Style s = style ?? ref.watch(gameProvider.select((g) => g.settings.style));
+    final Style s = style ?? ref.watch(styleProvider);
     return Art(chameleonPath(s, pose));
   }
 }
@@ -241,7 +310,8 @@ class SpeakBubble extends StatelessWidget {
       );
 }
 
-/// Switches the drawing style (the same puzzle, drawn another way).
+/// Switches the drawing style (the same puzzle, drawn another way) until
+/// the app is closed; the parent's 「一開始的畫風」 does not change.
 class StyleSwitch extends ConsumerWidget {
   const StyleSwitch({super.key, this.size = 52, this.onSwitched});
 
@@ -250,7 +320,7 @@ class StyleSwitch extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final style = ref.watch(gameProvider.select((g) => g.settings.style));
+    final style = ref.watch(styleProvider);
     return RoundButton(
       label: Strings.switchStyle,
       icon: Icons.palette_rounded,
@@ -258,7 +328,8 @@ class StyleSwitch extends ConsumerWidget {
       sound: 'switch_style',
       onTap: () {
         final next = style.next;
-        ref.read(gameProvider.notifier).settings((s) => s.copyWith(style: next));
+        // For this time only: the parent's 「一開始的畫風」 stays as it was.
+        ref.read(pickedStyleProvider.notifier).pick(next);
         onSwitched?.call(next);
       },
       child: Padding(

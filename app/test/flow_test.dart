@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sharp_eyes/app/strings.dart';
 import 'package:sharp_eyes/core/content.dart';
 import 'package:sharp_eyes/core/game.dart';
+import 'package:sharp_eyes/core/providers.dart';
 import 'package:sharp_eyes/core/puzzles.dart';
 import 'package:sharp_eyes/core/scenes.dart';
 import 'package:sharp_eyes/features/play/change_game.dart';
@@ -80,15 +81,16 @@ void main() {
 
       // Another style, the same puzzle.
       await app.tapLabel(Strings.switchStyle, ms: 1000);
-      expect(app.game.settings.style, Style.b);
+      expect(app.container.read(styleProvider), Style.b);
       await flow.shot(device, '11_two_style_b');
       await app.tapLabel(Strings.switchStyle, ms: 1000);
-      expect(app.game.settings.style, Style.c);
+      expect(app.container.read(styleProvider), Style.c);
       await flow.shot(device, '12_two_style_c');
       await flow.wait(3);
       await app.tapLabel(Strings.toHome, ms: 1200);
       await app.tapLabel(Strings.switchStyle, ms: 600);
-      expect(app.game.settings.style, Style.a);
+      expect(app.container.read(styleProvider), Style.a);
+      expect(app.game.settings.style, Style.a, reason: 'the parent\'s style never changed');
 
       // 小變躲在哪裡？ With a hint.
       await app.tapLabel(Mode.hide.zh, ms: 1500);
@@ -214,13 +216,5 @@ class Flow {
 
   Future<void> tapDiff(Diff d, {int picture = 0}) => tapBox(d.box, picture: picture);
 
-  Future<void> answerGate() async {
-    const digits = {'零': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9};
-    final parts = (find.textContaining('加').evaluate().first.widget as Text).data!.split(' ');
-    for (final d in '${digits[parts[0]]! + digits[parts[2]]!}'.split('')) {
-      await tester.tap(find.byKey(ValueKey('gate-key-$d')));
-      await app.settle(200);
-    }
-    await app.settle(800);
-  }
+  Future<void> answerGate() => app.answerGate();
 }

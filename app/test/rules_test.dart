@@ -211,6 +211,48 @@ void main() {
     expect(broken.settings.hints, isTrue);
   });
 
+  test('the sitting is kept: closed for less than ten minutes it goes on, longer is a new one', () {
+    final t = DateTime(2026, 11, 6, 10);
+    final g = const Game().played(const Duration(minutes: 12), t);
+    final back = Game.fromJson(g.toJson());
+    expect(back.sitting.played, const Duration(minutes: 12));
+    expect(back.sitting.seen, t);
+    expect(back.opened(t.add(const Duration(minutes: 9))).sitting.played, const Duration(minutes: 12), reason: 'the same sitting');
+    expect(back.opened(t.add(const Duration(minutes: 10))).sitting.played, Duration.zero, reason: 'a new sitting');
+    // A clock moved back while the app was closed: the sitting goes on, and
+    // the rest keeps the time it had left.
+    final resting = const Game().rest(t.subtract(const Duration(minutes: 20))).played(Duration.zero, t);
+    final early = resting.opened(t.subtract(const Duration(days: 1)));
+    expect(early.sitting.played, Duration.zero);
+    expect(early.resting(t.subtract(const Duration(days: 1)).add(const Duration(minutes: 39))), isTrue);
+    expect(early.resting(t.subtract(const Duration(days: 1)).add(const Duration(minutes: 41))), isFalse, reason: 'not a day longer');
+    expect(const Game().played(const Duration(minutes: 3), t).playOn().sitting.played, Duration.zero);
+    expect(Game.fromJson({'sitting': {'played': -5, 'seen': 3}}).sitting.played, Duration.zero);
+  });
+
+  test('the parent gate waits 1, 5, then 15 minutes, and a clock moved back cannot make it wait for ever', () {
+    var t = DateTime(2026, 11, 6, 10);
+    var lock = const GateLock();
+    for (final wait in [1, 5, 15, 15]) {
+      for (var i = 0; i < GateLock.missesToLock; i++) {
+        expect(lock.locked(t), isFalse);
+        lock = lock.miss(t);
+      }
+      expect(lock.locked(t), isTrue);
+      expect(lock.left(t), Duration(minutes: wait));
+      lock = GateLock.fromJson(lock.toJson());
+      expect(lock.locked(t.add(Duration(minutes: wait, seconds: -1))), isTrue, reason: 'kept in the save');
+      t = t.add(Duration(minutes: wait));
+    }
+    // The clock goes back a day during a wait: it waits its 15 minutes from now, no more.
+    final dayBefore = t.subtract(const Duration(days: 1));
+    final fixed = lock.checked(dayBefore);
+    expect(fixed.left(dayBefore), const Duration(minutes: 15));
+    expect(fixed.locked(dayBefore.add(const Duration(minutes: 15))), isFalse);
+    expect(identical(lock.checked(t), lock), isTrue);
+    expect(GateLock.fromJson({'misses': 9, 'locks': 'x'}).misses, GateLock.missesToLock - 1);
+  });
+
   test('2～3 year olds do not get two pictures; stars stop at three', () {
     expect(const Settings(level: Level.small).shows(Mode.two), isFalse);
     expect(const Settings(level: Level.small).shows(Mode.hide), isTrue);

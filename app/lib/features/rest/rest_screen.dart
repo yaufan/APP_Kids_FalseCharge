@@ -22,7 +22,7 @@ class RestScreen extends ConsumerStatefulWidget {
   ConsumerState<RestScreen> createState() => _RestScreenState();
 }
 
-class _RestScreenState extends ConsumerState<RestScreen> {
+class _RestScreenState extends ConsumerState<RestScreen> with HushOnLeave {
   late final Sounds _sounds;
 
   @override
@@ -33,7 +33,7 @@ class _RestScreenState extends ConsumerState<RestScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _sounds.play('rest');
-      if (ref.read(gameProvider).settings.voice) ref.read(voiceProvider).say('${Strings.restTitle}，${Strings.restLine.replaceAll('\n', '')}');
+      speak(ref, '${Strings.restTitle}，${Strings.restLine.replaceAll('\n', '')}');
     });
   }
 
@@ -44,16 +44,17 @@ class _RestScreenState extends ConsumerState<RestScreen> {
   }
 
   Future<void> _parent() async {
-    if (!await showParentGate(context) || !mounted) return;
+    if (!await showParentGate(context, forParentMode: false) || !mounted) return;
     ref.read(gameProvider.notifier).change((g) => g.playOn());
-    ref.read(sessionStartProvider.notifier).restart();
     context.go('/');
   }
 
   @override
   Widget build(BuildContext context) {
-    final style = ref.watch(gameProvider.select((g) => g.settings.style));
-    return Scaffold(
+    final style = ref.watch(styleProvider);
+    // The phone's back key does nothing here: the app stays resting.
+    return BackKey(
+      child: Scaffold(
       backgroundColor: const Color(0xFF1E2550),
       body: Stack(children: [
         Positioned.fill(child: Art(backgroundPath(style, Place.park), fit: BoxFit.cover)),
@@ -112,6 +113,7 @@ class _RestScreenState extends ConsumerState<RestScreen> {
           ]),
         ),
       ]),
+      ),
     );
   }
 }

@@ -5,18 +5,44 @@ import 'package:go_router/go_router.dart';
 import '../../app/strings.dart';
 import '../../app/theme.dart';
 import '../../app/version.dart';
+import '../../app/widgets.dart';
 import '../../core/content.dart';
 import '../../core/game.dart';
 import '../../core/providers.dart';
+import 'parent_gate.dart';
 
 /// Parent mode (after the gate): the child's age, play time, the style to
 /// start in, hints, sounds, how each place is going and ideas for playing
-/// together.
-class ParentScreen extends ConsumerWidget {
+/// together. It closes by itself when the app goes out of sight or after
+/// five minutes without a touch (ParentGuard).
+class ParentScreen extends ConsumerStatefulWidget {
   const ParentScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ParentScreen> createState() => _ParentScreenState();
+}
+
+class _ParentScreenState extends ConsumerState<ParentScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // The child's line does not go on over parent mode.
+    hush(ref);
+  }
+
+  /// Back to the child's pages (the rest, if it is time to rest).
+  void _close() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/');
+    }
+  }
+
+  void _leave() => context.go(ref.read(gameProvider).resting(ref.read(clockProvider)()) ? '/rest' : '/');
+
+  @override
+  Widget build(BuildContext context) {
     final g = ref.watch(gameProvider);
     final s = g.settings;
     final game = ref.read(gameProvider.notifier);
@@ -61,12 +87,16 @@ class ParentScreen extends ConsumerWidget {
 
     const note = TextStyle(fontSize: 14, height: 1.5, color: Eye.inkSoft);
 
-    return Scaffold(
+    return ParentGuard(
+      onLeave: _leave,
+      child: BackKey(
+      onBack: _close,
+      child: Scaffold(
       backgroundColor: Eye.parentBg,
       appBar: AppBar(
         backgroundColor: Eye.parentBg,
         title: const Text(Strings.parentTitle),
-        leading: IconButton(icon: const Icon(Icons.close_rounded), tooltip: Strings.back, onPressed: () => context.canPop() ? context.pop() : context.go('/')),
+        leading: IconButton(icon: const Icon(Icons.close_rounded), tooltip: Strings.back, onPressed: _close),
       ),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 32), children: [
         section(Strings.age, [
@@ -86,7 +116,6 @@ class ParentScreen extends ConsumerWidget {
               key: const ValueKey('play-on'),
               onPressed: () {
                 game.change((g) => g.playOn());
-                ref.read(sessionStartProvider.notifier).restart();
                 context.go('/');
               },
               child: const Text(Strings.playOn),
@@ -94,7 +123,11 @@ class ParentScreen extends ConsumerWidget {
           ],
         ]),
         section(Strings.style, [
-          chips(Style.values, s.style, (v) => v.zh, (v) => game.settings((x) => x.copyWith(style: v)), 'style'),
+          chips(Style.values, s.style, (v) => v.zh, (v) {
+            game.settings((x) => x.copyWith(style: v));
+            // The parent's choice shows straight away.
+            ref.read(pickedStyleProvider.notifier).pick(null);
+          }, 'style'),
           const SizedBox(height: 10),
           const Text(Strings.styleNote, style: note),
         ]),
@@ -145,6 +178,8 @@ class ParentScreen extends ConsumerWidget {
           Text(Strings.version(appVersion), style: note),
         ]),
       ]),
+      ),
+      ),
     );
   }
 }

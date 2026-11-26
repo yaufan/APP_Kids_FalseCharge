@@ -24,7 +24,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> with HushOnLeave {
   late final Sounds _sounds;
   var _hello = 0;
   var _wiggle = 0;
@@ -44,8 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _say(String zh, {String? en}) {
-    final s = ref.read(gameProvider).settings;
-    if (mounted && s.voice) ref.read(voiceProvider).say(zh, en: s.english ? en : null);
+    if (mounted) speak(ref, zh, en: en);
   }
 
   void _chameleon() {
@@ -72,8 +71,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final style = ref.watch(gameProvider.select((g) => g.settings.style));
-    return Scaffold(
+    final style = ref.watch(styleProvider);
+    // The phone's back key does nothing on the home page (it never closes
+    // the app under a child's fingers).
+    return BackKey(
+      child: Scaffold(
       body: Sky(
         top: Eye.sky,
         bottom: Eye.cream,
@@ -146,6 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }),
         ),
       ),
+      ),
     );
   }
 }
@@ -162,7 +165,7 @@ class PlaceCard extends ConsumerWidget {
     final g = ref.watch(gameProvider);
     final open = g.settings.opens(place);
     final scene = ref.watch(sceneProvider(place)).value;
-    final style = g.settings.style;
+    final style = ref.watch(styleProvider);
     return Semantics(
       container: true,
       button: true,
