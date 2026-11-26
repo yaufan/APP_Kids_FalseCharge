@@ -817,7 +817,7 @@ def scene():
 
 
 # hide spots: (centre in scene px, size in scene px, the thing drawn in front of part of him, tint)
-HIDES = [((176, 326), 44, "castle", "sand"), ((422, 312), 42, "boat", "blue"), ((326, 276), 40, "ball", "white")]
+HIDES = [((176, 316), 44, "castle", "sand"), ((422, 312), 42, "boat", "blue"), ((326, 276), 40, "ball", "white")]
 
 # for `build.py preview`: the changed version shows these
 PREVIEW_CHANGES = [("crab", 0), ("umbrella", 1), ("boat", 1), ("palm", 1), ("swimring", 0), ("sun", 0), ("ball2", "extra:ball2")]

@@ -1,11 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sharp_eyes/app/widgets.dart';
 import 'package:sharp_eyes/core/content.dart';
 import 'package:sharp_eyes/core/puzzles.dart';
 import 'package:sharp_eyes/core/scenes.dart';
+import 'package:sharp_eyes/features/play/scene_view.dart';
 
 /// The drawings and the scene files agree (docs/scenes.md), and every place
 /// can make the puzzles every age needs.
@@ -19,6 +25,48 @@ void main() {
     for (final s in Style.values) {
       for (final pose in ['wave', 'think', 'cheer', 'magic', 'sleep', for (final t in tints) 'hide_$t']) {
         exists(chameleonPath(s, pose));
+      }
+    }
+  });
+
+  testWidgets('小變 never hides completely: even for 4～5 a bit of him shows at every spot', (tester) async {
+    // Drawn with the real flutter_svg: the scene with him hiding, and with
+    // him on top of everything; the part that shows is what differs from
+    // the scene without him. (The three styles share one geometry.)
+    tester.view.physicalSize = const Size(600, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final key = GlobalKey();
+    Future<Uint8List> draw(Widget w) async {
+      await tester.pumpWidget(MaterialApp(home: Align(alignment: Alignment.topLeft, child: RepaintBoundary(key: key, child: SizedBox.square(dimension: 600, child: w)))));
+      for (var i = 0; i < 8; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      return (await tester.runAsync(() async {
+        final image = await (key.currentContext!.findRenderObject()! as RenderRepaintBoundary).toImage();
+        return (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!.buffer.asUint8List();
+      }))!;
+    }
+
+    int differ(Uint8List a, Uint8List b) {
+      var n = 0;
+      for (var i = 0; i < a.length; i += 4) {
+        if ((a[i] - b[i]).abs() + (a[i + 1] - b[i + 1]).abs() + (a[i + 2] - b[i + 2]).abs() > 24) n++;
+      }
+      return n;
+    }
+
+    for (final place in Place.values) {
+      final scene = read(place), picture = Picture.of(scene);
+      Widget view([Layer? l]) => SceneView(picture: picture, style: Style.a, side: 600, radius: 0, layers: [?l]);
+      final bare = await draw(view());
+      for (final hide in scene.hides) {
+        final r = HideRound(scene: scene, hide: hide, level: Level.big);
+        Widget him() => Art(chameleonPath(Style.a, r.art), fit: BoxFit.fill);
+        final shows = differ(bare, await draw(view(Layer(r.box, him(), z: hide.z))));
+        final all = differ(bare, await draw(view(Layer(r.box, him()))));
+        expect(shows / all, greaterThan(0.2), reason: '${place.name} ${hide.tint}: $shows of $all');
       }
     }
   });
